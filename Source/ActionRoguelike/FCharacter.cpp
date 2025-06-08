@@ -14,13 +14,13 @@ AFCharacter::AFCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
-	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->bUsePawnControlRotation = true;
+	SpringArm->SetupAttachment(RootComponent);
 	
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-	CameraComp->SetupAttachment(SpringArm);
+	CameraComp->SetupAttachment(SpringArm) ;
 	
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
@@ -39,12 +39,19 @@ void AFCharacter::BeginPlay()
 
 void AFCharacter::MoveForward(const FInputActionValue& InputActionValue)
 {
-	AddMovementInput(GetActorForwardVector(), InputActionValue.GetMagnitude());
+	FRotator ControlRotator = GetControlRotation();
+	ControlRotator.Pitch = 0.0f;
+	ControlRotator.Roll = 0.0f;
+	AddMovementInput(ControlRotator.Vector(), InputActionValue.GetMagnitude());
 }
 
 void AFCharacter::MoveLateral(const FInputActionValue& InputActionValue)
 {
-	AddMovementInput(GetActorRightVector(), InputActionValue.GetMagnitude());
+	FRotator ControlRotator = GetControlRotation();
+	ControlRotator.Pitch = 0.0f;
+	ControlRotator.Roll = 0.0f;
+	FVector RightVector = FRotationMatrix(ControlRotator).GetScaledAxis(EAxis::Y);
+	AddMovementInput(RightVector, InputActionValue.GetMagnitude());
 }
 
 void AFCharacter::LookRotation(const FInputActionValue& InputActionValue)

@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "GameFramework/Character.h"
 #include "FCharacter.generated.h"
 
+struct FInputActionValue;
+class UInputAction;
 class USpringArmComponent;
 class UCameraComponent;
-
+class UInputMappingContext;
 UCLASS()
 class ACTIONROGUELIKE_API AFCharacter : public ACharacter
 {
@@ -24,9 +27,19 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input);
+	UInputMappingContext* InputMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	UInputAction* ForwardMovementAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	UInputAction* LateralMovementAction;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	void MoveForward(const FInputActionValue& Value);
+	void MoveLateral(const FInputActionValue& Value);
 
 public:
 	// Called every frame

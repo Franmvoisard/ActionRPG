@@ -4,7 +4,8 @@
 
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 // Sets default values
 AFCharacter::AFCharacter()
 {
@@ -22,7 +23,23 @@ AFCharacter::AFCharacter()
 void AFCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	if(APlayerController* playerController = Cast<APlayerController>(GetController()))
+	{
+		if(UEnhancedInputLocalPlayerSubsystem* subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(playerController->GetLocalPlayer()))
+		{
+			subsystem->AddMappingContext(InputMappingContext,0);
+		}
+	}
+}
+
+void AFCharacter::MoveForward(const FInputActionValue& Value)
+{
+	AddMovementInput(GetActorForwardVector(), Value.GetMagnitude());
+}
+
+void AFCharacter::MoveLateral(const FInputActionValue& Value)
+{
+	AddMovementInput(GetActorRightVector(), Value.GetMagnitude());
 }
 
 // Called every frame
@@ -34,6 +51,10 @@ void AFCharacter::Tick(float DeltaTime)
 // Called to bind functionality to input
 void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if(TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(ForwardMovementAction, ETriggerEvent::Triggered, this, &AFCharacter::MoveForward);
+		EnhancedInputComponent->BindAction(LateralMovementAction, ETriggerEvent::Triggered, this,  &AFCharacter::MoveLateral);
+	}
 }
 

@@ -36,15 +36,20 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	UInputAction* LateralMovementAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	const UInputAction* LookRotationAction;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	void MoveForward(const FInputActionValue& Value);
-	void MoveLateral(const FInputActionValue& Value);
+	void MoveForward(const FInputActionValue& InputActionValue);
+	void MoveLateral(const FInputActionValue& InputActionValue);
+	void LookRotation(const FInputActionValue& InputActionValue);
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 };

@@ -32,14 +32,21 @@ void AFCharacter::BeginPlay()
 	}
 }
 
-void AFCharacter::MoveForward(const FInputActionValue& Value)
+void AFCharacter::MoveForward(const FInputActionValue& InputActionValue)
 {
-	AddMovementInput(GetActorForwardVector(), Value.GetMagnitude());
+	AddMovementInput(GetActorForwardVector(), InputActionValue.GetMagnitude());
 }
 
-void AFCharacter::MoveLateral(const FInputActionValue& Value)
+void AFCharacter::MoveLateral(const FInputActionValue& InputActionValue)
 {
-	AddMovementInput(GetActorRightVector(), Value.GetMagnitude());
+	AddMovementInput(GetActorRightVector(), InputActionValue.GetMagnitude());
+}
+
+void AFCharacter::LookRotation(const FInputActionValue& InputActionValue)
+{
+	FVector2D LookRotationInput = InputActionValue.Get<FVector2D>();
+	AddControllerYawInput(LookRotationInput.X);
+	AddControllerPitchInput(-LookRotationInput.Y);
 }
 
 // Called every frame
@@ -55,6 +62,7 @@ void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	{
 		EnhancedInputComponent->BindAction(ForwardMovementAction, ETriggerEvent::Triggered, this, &AFCharacter::MoveForward);
 		EnhancedInputComponent->BindAction(LateralMovementAction, ETriggerEvent::Triggered, this,  &AFCharacter::MoveLateral);
+		EnhancedInputComponent->BindAction(LookRotationAction, ETriggerEvent::Triggered, this, &AFCharacter::LookRotation);
 	}
 }
 

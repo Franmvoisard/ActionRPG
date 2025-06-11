@@ -43,6 +43,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	const UInputAction* PrimaryAttackAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	const UInputAction* JumpAction;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ProjectileClass;
 	

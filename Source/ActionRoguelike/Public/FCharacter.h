@@ -29,22 +29,29 @@ protected:
 	USpringArmComponent* SpringArm;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input);
-	UInputMappingContext* InputMappingContext;
+	const UInputMappingContext* InputMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	UInputAction* ForwardMovementAction;
+	const UInputAction* ForwardMovementAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	UInputAction* LateralMovementAction;
+	const UInputAction* LateralMovementAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	const UInputAction* LookRotationAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	const UInputAction* PrimaryAttackAction;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ProjectileClass;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	void MoveForward(const FInputActionValue& InputActionValue);
 	void MoveLateral(const FInputActionValue& InputActionValue);
 	void LookRotation(const FInputActionValue& InputActionValue);
+	void PrimaryAttack();
 
 public:
 	// Called every frame

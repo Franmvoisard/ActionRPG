@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "FCharacter.h"
-
+#include "ActionRoguelike/Public/FCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
@@ -28,11 +27,11 @@ AFCharacter::AFCharacter()
 void AFCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	if(APlayerController* playerController = Cast<APlayerController>(GetController()))
+	if(const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
-		if(UEnhancedInputLocalPlayerSubsystem* subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(playerController->GetLocalPlayer()))
+		if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			subsystem->AddMappingContext(InputMappingContext,0);
+			Subsystem->AddMappingContext(InputMappingContext,0);
 		}
 	}
 }
@@ -50,7 +49,8 @@ void AFCharacter::MoveLateral(const FInputActionValue& InputActionValue)
 	FRotator ControlRotator = GetControlRotation();
 	ControlRotator.Pitch = 0.0f;
 	ControlRotator.Roll = 0.0f;
-	FVector RightVector = FRotationMatrix(ControlRotator).GetScaledAxis(EAxis::Y);
+	FVector RightVector = FRotationMatrix(ControlRotator).
+	 GetScaledAxis(EAxis::Y);
 	AddMovementInput(RightVector, InputActionValue.GetMagnitude());
 }
 
@@ -59,6 +59,15 @@ void AFCharacter::LookRotation(const FInputActionValue& InputActionValue)
 	FVector2D LookRotationInput = InputActionValue.Get<FVector2D>();
 	AddControllerYawInput(LookRotationInput.X);
 	AddControllerPitchInput(-LookRotationInput.Y);
+}
+
+void AFCharacter::PrimaryAttack()
+{
+	FTransform SpawnTransform = FTransform(GetControlRotation(), GetActorLocation());
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParameters);
 }
 
 // Called every frame
@@ -75,6 +84,7 @@ void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(ForwardMovementAction, ETriggerEvent::Triggered, this, &AFCharacter::MoveForward);
 		EnhancedInputComponent->BindAction(LateralMovementAction, ETriggerEvent::Triggered, this,  &AFCharacter::MoveLateral);
 		EnhancedInputComponent->BindAction(LookRotationAction, ETriggerEvent::Triggered, this, &AFCharacter::LookRotation);
+		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AFCharacter::PrimaryAttack);
 	}
 }
 

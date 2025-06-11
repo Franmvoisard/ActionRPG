@@ -63,10 +63,10 @@ void AFCharacter::LookRotation(const FInputActionValue& InputActionValue)
 
 void AFCharacter::PrimaryAttack()
 {
-	FTransform SpawnTransform = FTransform(GetControlRotation(), GetActorLocation());
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FTransform SpawnTransform = FTransform(GetControlRotation(), HandLocation);
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParameters);
 }
 

@@ -64,12 +64,19 @@ void AFCharacter::LookRotation(const FInputActionValue& InputActionValue)
 
 void AFCharacter::PrimaryAttack()
 {
+	PlayAnimMontage(AttackAnimation);
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &AFCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+}
+
+void AFCharacter::PrimaryAttack_TimeElapsed()
+{
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 	FTransform SpawnTransform = FTransform(GetControlRotation(), HandLocation);
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParameters);
 }
+
 
 void AFCharacter::Tick(float DeltaTime)
 {

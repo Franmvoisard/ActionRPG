@@ -29,6 +29,11 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
 
+	FTimerHandle TimerHandle_PrimaryAttack;
+
+	UPROPERTY(EditAnywhere, Category = Attack);
+	UAnimMontage* AttackAnimation;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input);
 	const UInputMappingContext* InputMappingContext;
 
@@ -61,6 +66,7 @@ protected:
 	void MoveForward(const FInputActionValue& InputActionValue);
 	void MoveLateral(const FInputActionValue& InputActionValue);
 	void LookRotation(const FInputActionValue& InputActionValue);
+	void PrimaryAttack_TimeElapsed();
 	void PrimaryAttack();
 
 public:

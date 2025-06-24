@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "FCharacter.generated.h"
 
+class UFInteractionComponent;
 struct FInputActionValue;
 class UInputAction;
 class USpringArmComponent;
@@ -31,6 +32,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input);
 	const UInputMappingContext* InputMappingContext;
 
+	UPROPERTY(EditAnywhere)
+	UFInteractionComponent* InteractionComponent;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	const UInputAction* ForwardMovementAction;
 
@@ -46,6 +50,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	const UInputAction* JumpAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	const UInputAction* PrimaryInteractAction;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ProjectileClass;
 	

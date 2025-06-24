@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "FInteractionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
 AFCharacter::AFCharacter()
@@ -18,7 +19,7 @@ AFCharacter::AFCharacter()
 	
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComp->SetupAttachment(SpringArm) ;
-	
+	InteractionComponent = CreateDefaultSubobject<UFInteractionComponent>(TEXT("Interaction Component"));
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
@@ -70,7 +71,6 @@ void AFCharacter::PrimaryAttack()
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParameters);
 }
 
-// Called every frame
 void AFCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -87,6 +87,7 @@ void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AFCharacter::PrimaryAttack);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AFCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AFCharacter::StopJumping);
+		EnhancedInputComponent->BindAction(PrimaryInteractAction, ETriggerEvent::Triggered, InteractionComponent, &UFInteractionComponent::PrimaryInteract);
 	}
 }
 

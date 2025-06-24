@@ -12,7 +12,7 @@ class ACTIONROGUELIKE_API AFItemChest : public AActor, public IFGameplayInterfac
 {
 	GENERATED_BODY()
 
-	void Interact_Implementation(APawn* InstigatorPawn) override;
+	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 protected:
 
 	UPROPERTY(VisibleAnywhere)

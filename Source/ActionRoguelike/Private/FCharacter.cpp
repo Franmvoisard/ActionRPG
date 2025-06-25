@@ -94,7 +94,7 @@ void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AFCharacter::PrimaryAttack);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AFCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AFCharacter::StopJumping);
-		EnhancedInputComponent->BindAction(PrimaryInteractAction, ETriggerEvent::Triggered, InteractionComponent, &UFInteractionComponent::PrimaryInteract);
+		EnhancedInputComponent->BindAction(PrimaryInteractAction, ETriggerEvent::Started, InteractionComponent, &UFInteractionComponent::PrimaryInteract);
 	}
 }
 

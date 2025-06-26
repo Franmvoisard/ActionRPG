@@ -18,11 +18,11 @@ private:
 	void InitializeRadialForceComponent();
 	
 protected:
-	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 	UFUNCTION()
-	void OnBarrelBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult);
+	void OnBarrelHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit);
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BarrelStaticMesh;

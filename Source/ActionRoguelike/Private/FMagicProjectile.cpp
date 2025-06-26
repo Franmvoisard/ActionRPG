@@ -21,7 +21,6 @@ AFMagicProjectile::AFMagicProjectile()
 	ProjectileMovement->InitialSpeed = 1000.0f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bInitialVelocityInLocalSpace = true;
-	
 }
 
 // Called when the game starts or when spawned

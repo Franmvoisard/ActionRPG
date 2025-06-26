@@ -19,7 +19,7 @@ public:
 	AFMagicProjectile();
 
 protected:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USphereComponent* SphereComponent;
 
 	UPROPERTY(VisibleAnywhere)

@@ -18,9 +18,6 @@ class ACTIONROGUELIKE_API AFCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this character's properties
-	AFCharacter();
 	void ComputeProjectileSpawnPosition(FTransform& SpawnTransform, const FVector& ProjectileStartPosition) const;
 
 protected:
@@ -40,7 +37,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UFInteractionComponent* InteractionComponent;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	const UInputAction* ForwardMovementAction;
 
@@ -58,10 +55,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	const UInputAction* PrimaryInteractAction;
-	
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ProjectileClass;
-	
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	void MoveForward(const FInputActionValue& InputActionValue);
@@ -71,6 +68,7 @@ protected:
 	void PrimaryAttack();
 
 public:
+	AFCharacter();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

@@ -37,7 +37,7 @@ void UFInteractionComponent::PrimaryInteract()
 	FRotator EyeRotation;
 	Owner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 	
-	FVector End = EyeLocation + (EyeRotation.Vector() * 1000);
+	FVector End = EyeLocation + EyeRotation.Vector() * 1000;
 	FCollisionShape Shape;
 	float Radius = 30.0f;
 	Shape.SetSphere(Radius);

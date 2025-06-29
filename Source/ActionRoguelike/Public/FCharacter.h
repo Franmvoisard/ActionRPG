@@ -21,6 +21,7 @@ class ACTIONROGUELIKE_API AFCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AFCharacter();
+	void ComputeProjectileSpawnPosition(FTransform& SpawnTransform, const FVector& ProjectileStartPosition) const;
 
 protected:
 	UPROPERTY(VisibleAnywhere)

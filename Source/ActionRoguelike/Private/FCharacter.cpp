@@ -71,13 +71,33 @@ void AFCharacter::PrimaryAttack()
 void AFCharacter::PrimaryAttack_TimeElapsed()
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FTransform SpawnTransform = FTransform(GetControlRotation(), HandLocation);
+	FTransform SpawnTransform;
+
+	ComputeProjectileSpawnPosition(SpawnTransform, HandLocation);
+	
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParameters.Instigator = this;
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParameters);
 }
 
+void AFCharacter::ComputeProjectileSpawnPosition(FTransform& SpawnTransform, const FVector& ProjectileStartPosition) const
+{
+	FHitResult HitResult;
+
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+	
+	FCollisionShape CollisionShape;
+	CollisionShape.SetSphere(20.0f);
+	FVector TraceStart = CameraComp->GetComponentLocation();
+	FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * 1000;
+	GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_WorldDynamic, CollisionShape, CollisionParams);
+
+	FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
+	SpawnTransform = FTransform((Target - ProjectileStartPosition).Rotation(), ProjectileStartPosition);
+	
+}
 
 void AFCharacter::Tick(float DeltaTime)
 {

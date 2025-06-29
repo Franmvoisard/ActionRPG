@@ -20,8 +20,21 @@ AFMagicProjectile::AFMagicProjectile()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Movement");
 	ProjectileMovement->InitialSpeed = 1000.0f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
+	ProjectileMovement->ProjectileGravityScale = 0.0f;
 	ProjectileMovement->bInitialVelocityInLocalSpace = true;
 }
+
+void AFMagicProjectile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (APawn* ProjectileInstigator = GetInstigator())
+	{
+		SphereComponent->IgnoreActorWhenMoving(ProjectileInstigator, true);
+		ProjectileInstigator->MoveIgnoreActorAdd(this);
+	}
+}
+	
 
 // Called when the game starts or when spawned
 void AFMagicProjectile::BeginPlay()

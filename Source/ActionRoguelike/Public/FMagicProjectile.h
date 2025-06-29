@@ -19,6 +19,8 @@ public:
 	AFMagicProjectile();
 
 protected:
+
+	virtual void PostInitializeComponents() override;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USphereComponent* SphereComponent;
 

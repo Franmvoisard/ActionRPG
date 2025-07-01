@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "FInteractionComponent.h"
+#include "FProjectileBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
 AFCharacter::AFCharacter()
@@ -96,7 +97,19 @@ void AFCharacter::ComputeProjectileSpawnPosition(FTransform& SpawnTransform, con
 
 	FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
 	SpawnTransform = FTransform((Target - ProjectileStartPosition).Rotation(), ProjectileStartPosition);
+}
+
+void AFCharacter::AOEAttack()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FTransform SpawnTransform;
+
+	ComputeProjectileSpawnPosition(SpawnTransform, HandLocation);
 	
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParameters.Instigator = this;
+	GetWorld()->SpawnActor<AFProjectileBase>(AOEProjectileClass, SpawnTransform, SpawnParameters);
 }
 
 void AFCharacter::Tick(float DeltaTime)
@@ -113,6 +126,7 @@ void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(LateralMovementAction, ETriggerEvent::Triggered, this,  &AFCharacter::MoveLateral);
 		EnhancedInputComponent->BindAction(LookRotationAction, ETriggerEvent::Triggered, this, &AFCharacter::LookRotation);
 		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AFCharacter::PrimaryAttack);
+		EnhancedInputComponent->BindAction(AOEAttackAction, ETriggerEvent::Started, this, &AFCharacter::AOEAttack);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AFCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AFCharacter::StopJumping);
 		EnhancedInputComponent->BindAction(PrimaryInteractAction, ETriggerEvent::Started, InteractionComponent, &UFInteractionComponent::PrimaryInteract);

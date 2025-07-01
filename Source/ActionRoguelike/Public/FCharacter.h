@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "FCharacter.generated.h"
 
+class AFProjectileBase;
 class UFInteractionComponent;
 struct FInputActionValue;
 class UInputAction;
@@ -19,6 +20,7 @@ class ACTIONROGUELIKE_API AFCharacter : public ACharacter
 	GENERATED_BODY()
 
 	void ComputeProjectileSpawnPosition(FTransform& SpawnTransform, const FVector& ProjectileStartPosition) const;
+	void AOEAttack();
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -28,6 +30,9 @@ protected:
 	USpringArmComponent* SpringArm;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
+	
+	UPROPERTY(EditAnywhere, Category = Input)
+	const UInputAction* AOEAttackAction;
 
 	UPROPERTY(EditAnywhere, Category = Attack);
 	UAnimMontage* AttackAnimation;
@@ -56,9 +61,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	const UInputAction* PrimaryInteractAction;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> ProjectileClass;
+	UPROPERTY(EditAnywhere, Category = Abilities)
+	TSubclassOf<AFProjectileBase> ProjectileClass;
 
+	UPROPERTY(EditAnywhere, Category = Abilities)
+	TSubclassOf<AFProjectileBase> AOEProjectileClass;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	void MoveForward(const FInputActionValue& InputActionValue);

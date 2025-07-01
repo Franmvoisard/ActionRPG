@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "FMagicProjectile.generated.h"
+#include "FProjectileBase.generated.h"
 
 class UProjectileMovementComponent;
 class USphereComponent;
 
 UCLASS()
-class ACTIONROGUELIKE_API AFMagicProjectile : public AActor
+class ACTIONROGUELIKE_API AFProjectileBase : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	AFMagicProjectile();
+	AFProjectileBase();
 
 protected:
 

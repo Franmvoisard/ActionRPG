@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-#include "ActionRoguelike/Public/FMagicProjectile.h"
+#include "ActionRoguelike/Public/FProjectileBase.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 
 
 // Sets default values
-AFMagicProjectile::AFMagicProjectile()
+AFProjectileBase::AFProjectileBase()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -24,7 +24,7 @@ AFMagicProjectile::AFMagicProjectile()
 	ProjectileMovement->bInitialVelocityInLocalSpace = true;
 }
 
-void AFMagicProjectile::PostInitializeComponents()
+void AFProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
@@ -37,13 +37,13 @@ void AFMagicProjectile::PostInitializeComponents()
 	
 
 // Called when the game starts or when spawned
-void AFMagicProjectile::BeginPlay()
+void AFProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 // Called every frame
-void AFMagicProjectile::Tick(float DeltaTime)
+void AFProjectileBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }

@@ -2,6 +2,7 @@
 #include "ActionRoguelike/Public/FProjectileBase.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
 
@@ -34,12 +35,25 @@ void AFProjectileBase::PostInitializeComponents()
 		ProjectileInstigator->MoveIgnoreActorAdd(this);
 	}
 }
-	
+
+
+void AFProjectileBase::PlaySpawnSound() const
+{
+	if (SpawnSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, SpawnSound, GetActorLocation());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s has no SpawnSound set"), *GetNameSafe(this));
+	}
+}
 
 // Called when the game starts or when spawned
 void AFProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
+	PlaySpawnSound();
 }
 
 // Called every frame
@@ -47,4 +61,3 @@ void AFProjectileBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-

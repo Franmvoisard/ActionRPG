@@ -21,6 +21,10 @@ public:
 protected:
 
 	virtual void PostInitializeComponents() override;
+	void PlaySpawnSound() const;
+	UPROPERTY(EditAnywhere, Category = Sound)
+	USoundBase* SpawnSound;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USphereComponent* SphereComponent;
 

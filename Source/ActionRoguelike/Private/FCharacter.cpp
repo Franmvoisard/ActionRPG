@@ -100,8 +100,7 @@ void AFCharacter::Dash()
 
 void AFCharacter::Dash_To_Projectile(AFTeleportProjectile* Projectile)
 {
-	SetActorLocation(Projectile->GetActorLocation());
-	Projectile->Destroy();
+	TeleportTo(Projectile->GetActorLocation(), GetActorRotation());
 }
 
 void AFCharacter::Dash_TimeElapsed()

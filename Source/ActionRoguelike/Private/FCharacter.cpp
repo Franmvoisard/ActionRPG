@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "FInteractionComponent.h"
 #include "FProjectileBase.h"
+#include "FTeleportProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
 AFCharacter::AFCharacter()
@@ -26,6 +27,22 @@ AFCharacter::AFCharacter()
 }
 
 // Called when the game starts or when spawned
+void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	if(TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(ForwardMovementAction, ETriggerEvent::Triggered, this, &AFCharacter::MoveForward);
+		EnhancedInputComponent->BindAction(LateralMovementAction, ETriggerEvent::Triggered, this,  &AFCharacter::MoveLateral);
+		EnhancedInputComponent->BindAction(LookRotationAction, ETriggerEvent::Triggered, this, &AFCharacter::LookRotation);
+		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AFCharacter::PrimaryAttack);
+		EnhancedInputComponent->BindAction(AOEAttackAction, ETriggerEvent::Started, this, &AFCharacter::AOEAttack);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AFCharacter::Dash);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AFCharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AFCharacter::StopJumping);
+		EnhancedInputComponent->BindAction(PrimaryInteractAction, ETriggerEvent::Started, InteractionComponent, &UFInteractionComponent::PrimaryInteract);
+	}
+}
+
 void AFCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -36,6 +53,11 @@ void AFCharacter::BeginPlay()
 			Subsystem->AddMappingContext(InputMappingContext,0);
 		}
 	}
+}
+
+void AFCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 void AFCharacter::MoveForward(const FInputActionValue& InputActionValue)
@@ -69,20 +91,45 @@ void AFCharacter::PrimaryAttack()
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &AFCharacter::PrimaryAttack_TimeElapsed, 0.2f);
 }
 
-void AFCharacter::PrimaryAttack_TimeElapsed()
+void AFCharacter::Dash()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FTransform SpawnTransform;
-
-	ComputeProjectileSpawnPosition(SpawnTransform, HandLocation);
-	
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParameters.Instigator = this;
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParameters);
+	GetWorldTimerManager().SetTimer(TimerHandle_Dash, this, &AFCharacter::Dash_TimeElapsed, 0.2f);
+	PlayAnimMontage(AttackAnimation);
 }
 
-void AFCharacter::ComputeProjectileSpawnPosition(FTransform& SpawnTransform, const FVector& ProjectileStartPosition) const
+void AFCharacter::Dash_To_Projectile(AFTeleportProjectile* Projectile)
+{
+	SetActorLocation(Projectile->GetActorLocation());
+	Projectile->Destroy();
+}
+
+void AFCharacter::Dash_TimeElapsed()
+{
+	const FVector HandLocation = GetHandLocation();
+	const FTransform SpawnTransform = ComputeProjectileSpawnPosition(HandLocation);
+	AFTeleportProjectile* DashProjectile = GetWorld()->SpawnActor<AFTeleportProjectile>(DashProjectileClass, SpawnTransform, GetDefaultProjectileSpawnParameters());
+	DashProjectile->OnNotifyTriggerEffect.AddDynamic(this, &AFCharacter::Dash_To_Projectile);
+}
+
+void AFCharacter::PrimaryAttack_TimeElapsed()
+{
+	const FVector HandLocation = GetHandLocation();
+	const FTransform SpawnTransform = ComputeProjectileSpawnPosition(HandLocation);
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, GetDefaultProjectileSpawnParameters());
+}
+
+void AFCharacter::AOEAttack()
+{
+	const FVector HandLocation = GetHandLocation();
+	const FTransform SpawnTransform = ComputeProjectileSpawnPosition(HandLocation);
+	
+	GetWorld()->SpawnActor<AFProjectileBase>(AOEProjectileClass, SpawnTransform, GetDefaultProjectileSpawnParameters());
+}
+
+// Called to bind functionality to input
+
+
+FTransform AFCharacter::ComputeProjectileSpawnPosition(const FVector& ProjectileStartPosition) const
 {
 	FHitResult HitResult;
 
@@ -91,45 +138,25 @@ void AFCharacter::ComputeProjectileSpawnPosition(FTransform& SpawnTransform, con
 	
 	FCollisionShape CollisionShape;
 	CollisionShape.SetSphere(20.0f);
+	
+	// Calculate the starting transform to land into the player crosshair
 	FVector TraceStart = CameraComp->GetComponentLocation();
 	FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * 1000;
 	GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_WorldDynamic, CollisionShape, CollisionParams);
-
 	FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
-	SpawnTransform = FTransform((Target - ProjectileStartPosition).Rotation(), ProjectileStartPosition);
+	FRotator SpawnRotation = (Target - ProjectileStartPosition).Rotation();
+	return FTransform(SpawnRotation, ProjectileStartPosition);
 }
 
-void AFCharacter::AOEAttack()
+FActorSpawnParameters AFCharacter::GetDefaultProjectileSpawnParameters()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FTransform SpawnTransform;
-
-	ComputeProjectileSpawnPosition(SpawnTransform, HandLocation);
-	
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParameters.Instigator = this;
-	GetWorld()->SpawnActor<AFProjectileBase>(AOEProjectileClass, SpawnTransform, SpawnParameters);
+	return SpawnParameters;
 }
 
-void AFCharacter::Tick(float DeltaTime)
+FVector AFCharacter::GetHandLocation() const
 {
-	Super::Tick(DeltaTime);
+	return GetMesh()->GetSocketLocation("Muzzle_01");
 }
-
-// Called to bind functionality to input
-void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	if(TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		EnhancedInputComponent->BindAction(ForwardMovementAction, ETriggerEvent::Triggered, this, &AFCharacter::MoveForward);
-		EnhancedInputComponent->BindAction(LateralMovementAction, ETriggerEvent::Triggered, this,  &AFCharacter::MoveLateral);
-		EnhancedInputComponent->BindAction(LookRotationAction, ETriggerEvent::Triggered, this, &AFCharacter::LookRotation);
-		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AFCharacter::PrimaryAttack);
-		EnhancedInputComponent->BindAction(AOEAttackAction, ETriggerEvent::Started, this, &AFCharacter::AOEAttack);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AFCharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AFCharacter::StopJumping);
-		EnhancedInputComponent->BindAction(PrimaryInteractAction, ETriggerEvent::Started, InteractionComponent, &UFInteractionComponent::PrimaryInteract);
-	}
-}
-

@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "FCharacter.generated.h"
 
+class AFTeleportProjectile;
 class AFProjectileBase;
 class UFInteractionComponent;
 struct FInputActionValue;
@@ -19,8 +20,8 @@ class ACTIONROGUELIKE_API AFCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	void ComputeProjectileSpawnPosition(FTransform& SpawnTransform, const FVector& ProjectileStartPosition) const;
-	void AOEAttack();
+	FTransform ComputeProjectileSpawnPosition(const FVector& ProjectileStartPosition) const;
+	FVector GetHandLocation() const;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -30,6 +31,7 @@ protected:
 	USpringArmComponent* SpringArm;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_Dash;
 	
 	UPROPERTY(EditAnywhere, Category = Input)
 	const UInputAction* AOEAttackAction;
@@ -61,19 +63,32 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	const UInputAction* PrimaryInteractAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	const UInputAction* DashAction;
+
 	UPROPERTY(EditAnywhere, Category = Abilities)
 	TSubclassOf<AFProjectileBase> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = Abilities)
 	TSubclassOf<AFProjectileBase> AOEProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = Abilities)
+	TSubclassOf<AFProjectileBase> DashProjectileClass;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	void MoveForward(const FInputActionValue& InputActionValue);
 	void MoveLateral(const FInputActionValue& InputActionValue);
 	void LookRotation(const FInputActionValue& InputActionValue);
-	void PrimaryAttack_TimeElapsed();
 	void PrimaryAttack();
+	void PrimaryAttack_TimeElapsed();
+	void AOEAttack();
+	FActorSpawnParameters GetDefaultProjectileSpawnParameters();
+	void Dash();
+	void Dash_TimeElapsed();
+	
+	UFUNCTION()
+	void Dash_To_Projectile(AFTeleportProjectile* Projectile);
 
 public:
 	AFCharacter();

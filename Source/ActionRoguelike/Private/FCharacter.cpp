@@ -9,6 +9,7 @@
 #include "FProjectileBase.h"
 #include "FTeleportProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 // Sets default values
 AFCharacter::AFCharacter()
 {

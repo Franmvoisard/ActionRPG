@@ -19,6 +19,15 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnTeleportProjectile OnNotifyTriggerEffect;
 	void OnTriggerEffect();
+
+	UPROPERTY(VisibleAnywhere)
+	UParticleSystemComponent* ParticlePortalStart;
+	
+	UPROPERTY(VisibleAnywhere)
+	UParticleSystemComponent* ParticlePortalEnd;
+
+	UFUNCTION()
+	void OnPortalEndParticleStoppedPlayingDelegate(UParticleSystemComponent* ParticleSystem);
 protected:
 	FTimerHandle TimerHandle;
 		

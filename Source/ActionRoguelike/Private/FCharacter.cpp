@@ -141,7 +141,7 @@ FTransform AFCharacter::ComputeProjectileSpawnPosition(const FVector& Projectile
 	
 	// Calculate the starting transform to land into the player crosshair
 	FVector TraceStart = CameraComp->GetComponentLocation();
-	FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * 1000;
+	FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * 10000;
 	GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_WorldDynamic, CollisionShape, CollisionParams);
 	FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
 	FRotator SpawnRotation = (Target - ProjectileStartPosition).Rotation();

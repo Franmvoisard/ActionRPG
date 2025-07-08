@@ -1,5 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "ActionRoguelike/Public/FProjectileBase.h"
+
+#include "FAttributeComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -7,6 +9,7 @@
 
 
 // Sets default values
+
 AFProjectileBase::AFProjectileBase()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -25,10 +28,24 @@ AFProjectileBase::AFProjectileBase()
 	ProjectileMovement->bInitialVelocityInLocalSpace = true;
 }
 
+void AFProjectileBase::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                      UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor != GetInstigator())
+	{
+		if (UFAttributeComponent* AttributeComp = Cast<UFAttributeComponent>(OtherActor->GetComponentByClass(UFAttributeComponent::StaticClass())))
+		{
+			AttributeComp->ApplyHealthChange(-20.0f);
+			Destroy();
+		}
+	}
+}
+
 void AFProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AFProjectileBase::OnActorOverlap);
 	if (APawn* ProjectileInstigator = GetInstigator())
 	{
 		SphereComponent->IgnoreActorWhenMoving(ProjectileInstigator, true);

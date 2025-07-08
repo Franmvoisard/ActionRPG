@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "FCharacter.generated.h"
 
+class UFAttributeComponent;
 class AFTeleportProjectile;
 class AFProjectileBase;
 class UFInteractionComponent;
@@ -74,6 +75,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Abilities)
 	TSubclassOf<AFProjectileBase> DashProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = Abilities)
+	UFAttributeComponent* AttributeComponent;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

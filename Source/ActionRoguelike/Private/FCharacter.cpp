@@ -5,11 +5,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "FAttributeComponent.h"
 #include "FInteractionComponent.h"
 #include "FProjectileBase.h"
 #include "FTeleportProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Particles/ParticleSystemComponent.h"
 // Sets default values
 AFCharacter::AFCharacter()
 {
@@ -25,6 +25,7 @@ AFCharacter::AFCharacter()
 	InteractionComponent = CreateDefaultSubobject<UFInteractionComponent>(TEXT("Interaction Component"));
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
 }
 
 // Called when the game starts or when spawned

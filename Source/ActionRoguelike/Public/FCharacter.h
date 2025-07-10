@@ -76,7 +76,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Abilities)
 	TSubclassOf<AFProjectileBase> DashProjectileClass;
 
-	UPROPERTY(EditAnywhere, Category = Abilities)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Abilities)
 	UFAttributeComponent* AttributeComponent;
 	
 	// Called when the game starts or when spawned

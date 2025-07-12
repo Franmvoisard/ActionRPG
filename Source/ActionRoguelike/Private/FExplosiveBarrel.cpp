@@ -3,6 +3,7 @@
 
 #include "FExplosiveBarrel.h"
 
+#include "FAttributeComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 
@@ -15,7 +16,7 @@ AFExplosiveBarrel::AFExplosiveBarrel()
 	BarrelStaticMesh->SetSimulatePhysics(true);
 	RootComponent = BarrelStaticMesh;
 	BarrelStaticMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
-
+	BarrelStaticMesh->CanCharacterStepUpOn = ECB_No;
 	InitializeRadialForceComponent();
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ExplosionParticle"));
 }
@@ -44,6 +45,10 @@ void AFExplosiveBarrel::OnBarrelHit(UPrimitiveComponent* HitComponent, AActor* O
 	UE_LOG(LogTemp, Log, TEXT("Overlapped"));
 	if (OtherActor && OtherActor != this)
 	{
+		if (UFAttributeComponent* AttributeComponent = OtherActor->GetComponentByClass<UFAttributeComponent>())
+		{
+			AttributeComponent->ApplyHealthChange(-20.0f);	
+		}
 		UE_LOG(LogTemp, Warning, TEXT("ExplosiveBarrel overlapped with %s"), *OtherActor->GetName());
 		Explode();
 	}

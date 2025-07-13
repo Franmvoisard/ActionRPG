@@ -1,0 +1,35 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "FTargetDummy.generated.h"
+
+class UFAttributeComponent;
+
+UCLASS()
+class ACTIONROGUELIKE_API AFTargetDummy : public AActor
+{
+	GENERATED_BODY()
+
+	
+public:
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent* OwningComponent, float NewHealth, float Delta);
+	AFTargetDummy();
+	virtual void Tick(float DeltaTime) override;
+
+protected:
+
+	virtual void PostInitializeComponents() override;
+	
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* MeshComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	UFAttributeComponent* AttributeComponent;
+	
+	
+	virtual void BeginPlay() override;
+};

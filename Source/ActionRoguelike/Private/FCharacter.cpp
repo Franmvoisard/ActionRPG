@@ -57,6 +57,21 @@ void AFCharacter::BeginPlay()
 	}
 }
 
+void AFCharacter::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent* AttributeOwner, float NewHealth, float Delta)
+{
+	if (NewHealth <= 0.0f && Delta < 0.0f)
+	{
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		DisableInput(PlayerController);
+	} 	
+}
+
+void AFCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AttributeComponent->OnHealthChange.AddDynamic(this, &AFCharacter::OnHealthChanged);
+}
+
 void AFCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -114,9 +129,6 @@ void AFCharacter::AOEAttack()
 	SpawnProjectile(AOEProjectileClass);
 }
 
-// Called to bind functionality to input
-
-
 void AFCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClassToSpawn)
 {
 	if (ensureAlways(ProjectileClassToSpawn))
@@ -142,7 +154,7 @@ void AFCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClassToSpawn)
 		FHitResult HitResult;
 		
 		FVector TraceStart = CameraComp->GetComponentLocation();
-		FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * 10000;
+		FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * 5000;
 		GetWorld()->SweepSingleByObjectType(HitResult, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, CollisionShape, CollisionParams);
 		FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
 		FRotator SpawnRotation = (Target - HandLocation).Rotation();

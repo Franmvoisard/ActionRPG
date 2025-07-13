@@ -14,7 +14,9 @@ class ACTIONROGUELIKE_API UFAttributeComponent : public UActorComponent
 
 public:	
 	UFAttributeComponent();
-
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool IsAlive() const;
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float Health;

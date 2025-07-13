@@ -9,34 +9,41 @@
 class UProjectileMovementComponent;
 class USphereComponent;
 
-UCLASS()
+UCLASS(ABSTRACT)
 class ACTIONROGUELIKE_API AFProjectileBase : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
-	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	AFProjectileBase();
 
 protected:
 
-	virtual void PostInitializeComponents() override;
-	void PlaySpawnSound() const;
-	UPROPERTY(EditAnywhere, Category = Sound)
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
 	USoundBase* SpawnSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effects)
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UParticleSystem* ImpactVFX;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USphereComponent* SphereComponent;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UProjectileMovementComponent* ProjectileMovement;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UParticleSystemComponent* ParticleComponent;
-	
-	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	virtual void OnActorHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Explode();
+	void PlaySpawnSound() const;
+	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
+	
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

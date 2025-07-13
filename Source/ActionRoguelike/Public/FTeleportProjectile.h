@@ -11,29 +11,30 @@ class ACTIONROGUELIKE_API AFTeleportProjectile : public AFProjectileBase
 {
 	GENERATED_BODY()
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTeleportProjectile, AFTeleportProjectile*, TeleportProjectile);
-
 public:
 	AFTeleportProjectile();
-
-	UPROPERTY(BlueprintAssignable)
-	FOnTeleportProjectile OnNotifyTriggerEffect;
-	void OnTriggerEffect();
-
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Teleport")
+	USoundBase* TeleportSound;
+	
 	UPROPERTY(VisibleAnywhere)
 	UParticleSystemComponent* ParticlePortalStart;
 	
 	UPROPERTY(VisibleAnywhere)
 	UParticleSystemComponent* ParticlePortalEnd;
-
+	
 	UFUNCTION()
 	void OnPortalEndParticleStoppedPlayingDelegate(UParticleSystemComponent* ParticleSystem);
-protected:
-	FTimerHandle TimerHandle;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Teleport")
+	float TeleportDelay;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Teleport")
+	float DetonateDelay;
+	virtual void Explode_Implementation() override;
+
+	void TeleportInstigator();
+	FTimerHandle TimerHandle_DelayedDetonate;
 		
 	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 };

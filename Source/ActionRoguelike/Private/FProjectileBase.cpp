@@ -16,28 +16,30 @@ AFProjectileBase::AFProjectileBase()
 	PrimaryActorTick.bCanEverTick = true;
 	SphereComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	SphereComponent->SetCollisionProfileName("Projectile");
+	
 	RootComponent = SphereComponent;
 	
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>("ParticleComponent");
 	ParticleComponent->SetupAttachment(SphereComponent);
 	
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Movement");
-	ProjectileMovement->InitialSpeed = 1000.0f;
+	ProjectileMovement->InitialSpeed = 8000.0f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->ProjectileGravityScale = 0.0f;
 	ProjectileMovement->bInitialVelocityInLocalSpace = true;
 }
 
-void AFProjectileBase::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                      UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AFProjectileBase::OnActorHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && OtherActor != GetInstigator())
+	Explode();
+}
+
+void AFProjectileBase::Explode_Implementation()
+{
+	if (ensure(!IsValid(this)))
 	{
-		if (UFAttributeComponent* AttributeComp = Cast<UFAttributeComponent>(OtherActor->GetComponentByClass(UFAttributeComponent::StaticClass())))
-		{
-			AttributeComp->ApplyHealthChange(-20.0f);
-			Destroy();
-		}
+		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+		Destroy();
 	}
 }
 
@@ -45,7 +47,6 @@ void AFProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AFProjectileBase::OnActorOverlap);
 	if (APawn* ProjectileInstigator = GetInstigator())
 	{
 		SphereComponent->IgnoreActorWhenMoving(ProjectileInstigator, true);

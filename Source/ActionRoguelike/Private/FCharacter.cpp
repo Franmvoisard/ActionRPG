@@ -99,65 +99,54 @@ void AFCharacter::Dash()
 	PlayAnimMontage(AttackAnimation);
 }
 
-void AFCharacter::Dash_To_Projectile(AFTeleportProjectile* Projectile)
-{
-	TeleportTo(Projectile->GetActorLocation(), GetActorRotation());
-}
-
 void AFCharacter::Dash_TimeElapsed()
 {
-	const FVector HandLocation = GetHandLocation();
-	const FTransform SpawnTransform = ComputeProjectileSpawnPosition(HandLocation);
-	AFTeleportProjectile* DashProjectile = GetWorld()->SpawnActor<AFTeleportProjectile>(DashProjectileClass, SpawnTransform, GetDefaultProjectileSpawnParameters());
-	DashProjectile->OnNotifyTriggerEffect.AddDynamic(this, &AFCharacter::Dash_To_Projectile);
+	SpawnProjectile(DashProjectileClass);
 }
 
 void AFCharacter::PrimaryAttack_TimeElapsed()
 {
-	const FVector HandLocation = GetHandLocation();
-	const FTransform SpawnTransform = ComputeProjectileSpawnPosition(HandLocation);
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, GetDefaultProjectileSpawnParameters());
+	SpawnProjectile(ProjectileClass);
 }
 
 void AFCharacter::AOEAttack()
 {
-	const FVector HandLocation = GetHandLocation();
-	const FTransform SpawnTransform = ComputeProjectileSpawnPosition(HandLocation);
-	
-	GetWorld()->SpawnActor<AFProjectileBase>(AOEProjectileClass, SpawnTransform, GetDefaultProjectileSpawnParameters());
+	SpawnProjectile(AOEProjectileClass);
 }
 
 // Called to bind functionality to input
 
 
-FTransform AFCharacter::ComputeProjectileSpawnPosition(const FVector& ProjectileStartPosition) const
+void AFCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClassToSpawn)
 {
-	FHitResult HitResult;
+	if (ensureAlways(ProjectileClassToSpawn))
+	{
+		const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		
 
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this);
-	
-	FCollisionShape CollisionShape;
-	CollisionShape.SetSphere(20.0f);
-	
-	// Calculate the starting transform to land into the player crosshair
-	FVector TraceStart = CameraComp->GetComponentLocation();
-	FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * 10000;
-	GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_WorldDynamic, CollisionShape, CollisionParams);
-	FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
-	FRotator SpawnRotation = (Target - ProjectileStartPosition).Rotation();
-	return FTransform(SpawnRotation, ProjectileStartPosition);
-}
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParameters.Instigator = this;
 
-FActorSpawnParameters AFCharacter::GetDefaultProjectileSpawnParameters()
-{
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParameters.Instigator = this;
-	return SpawnParameters;
-}
+		FCollisionShape CollisionShape;
+		CollisionShape.SetSphere(20.0f);
 
-FVector AFCharacter::GetHandLocation() const
-{
-	return GetMesh()->GetSocketLocation("Muzzle_01");
+		FCollisionQueryParams CollisionParams;
+		CollisionParams.AddIgnoredActor(this);
+
+		FCollisionObjectQueryParams ObjectQueryParams;
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+
+		FHitResult HitResult;
+		
+		FVector TraceStart = CameraComp->GetComponentLocation();
+		FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * 10000;
+		GetWorld()->SweepSingleByObjectType(HitResult, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, CollisionShape, CollisionParams);
+		FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
+		FRotator SpawnRotation = (Target - HandLocation).Rotation();
+		FTransform SpawnTransform = FTransform(SpawnRotation, HandLocation);
+		GetWorld()->SpawnActor<AActor>(ProjectileClassToSpawn, SpawnTransform, SpawnParameters);		
+	}
 }

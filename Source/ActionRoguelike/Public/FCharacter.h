@@ -21,9 +21,6 @@ class ACTIONROGUELIKE_API AFCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	FTransform ComputeProjectileSpawnPosition(const FVector& ProjectileStartPosition) const;
-	FVector GetHandLocation() const;
-
 protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
@@ -87,12 +84,9 @@ protected:
 	void PrimaryAttack();
 	void PrimaryAttack_TimeElapsed();
 	void AOEAttack();
-	FActorSpawnParameters GetDefaultProjectileSpawnParameters();
+	void SpawnProjectile(TSubclassOf<AActor> ProjectileClass);
 	void Dash();
 	void Dash_TimeElapsed();
-	
-	UFUNCTION()
-	void Dash_To_Projectile(AFTeleportProjectile* Projectile);
 
 public:
 	AFCharacter();

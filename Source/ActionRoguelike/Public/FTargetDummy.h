@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "FTargetDummy.generated.h"
 
+class UFFlashOnHitComponent;
 class UFAttributeComponent;
 
 UCLASS()
@@ -18,8 +19,10 @@ public:
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent* OwningComponent, float NewHealth, float Delta);
 	AFTargetDummy();
-	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditDefaultsOnly)
+	UFFlashOnHitComponent* FlashOnHitComponent;
+	
 protected:
 
 	virtual void PostInitializeComponents() override;
@@ -30,6 +33,4 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	UFAttributeComponent* AttributeComponent;
 	
-	
-	virtual void BeginPlay() override;
 };

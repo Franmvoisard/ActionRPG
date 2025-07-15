@@ -3,34 +3,21 @@
 
 #include "FTargetDummy.h"
 #include "FAttributeComponent.h"
-
-const char* FlashHitParameterName = "TimeToHit";
+#include "ActionRoguelike/FFlashOnHitComponent.h"
 AFTargetDummy::AFTargetDummy()
 {
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	RootComponent = MeshComponent;
 	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
+	FlashOnHitComponent = CreateDefaultSubobject<UFFlashOnHitComponent>("Flash On Hit Component");
 }
 
 void AFTargetDummy::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent* OwningComponent, float NewHealth, float Delta)
 {
 	if (Delta < 0.0f)
 	{
-		MeshComponent->SetScalarParameterValueOnMaterials(FlashHitParameterName, GetWorld()->TimeSeconds);
+		FlashOnHitComponent->OnHit(MeshComponent);
 	}
-}
-
-// Called when the game starts or when spawned
-void AFTargetDummy::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AFTargetDummy::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void AFTargetDummy::PostInitializeComponents()

@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "FCharacter.generated.h"
 
+class UFFlashOnHitComponent;
 class UFAttributeComponent;
 class AFTeleportProjectile;
 class AFProjectileBase;
@@ -76,6 +77,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Abilities)
 	UFAttributeComponent* AttributeComponent;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	UFFlashOnHitComponent* FlashOnHitComponent;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UFUNCTION()

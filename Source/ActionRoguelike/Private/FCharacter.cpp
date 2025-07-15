@@ -9,6 +9,7 @@
 #include "FInteractionComponent.h"
 #include "FProjectileBase.h"
 #include "FTeleportProjectile.h"
+#include "ActionRoguelike/FFlashOnHitComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
 AFCharacter::AFCharacter()
@@ -26,6 +27,7 @@ AFCharacter::AFCharacter()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
+	FlashOnHitComponent = CreateDefaultSubobject<UFFlashOnHitComponent>("Flash On Hit Component");
 }
 
 // Called when the game starts or when spawned
@@ -59,11 +61,18 @@ void AFCharacter::BeginPlay()
 
 void AFCharacter::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent* AttributeOwner, float NewHealth, float Delta)
 {
-	if (NewHealth <= 0.0f && Delta < 0.0f)
+	if (Delta < 0.0f)
 	{
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-		DisableInput(PlayerController);
-	} 	
+		if (NewHealth <= 0.0f)
+		{
+			APlayerController* PlayerController = Cast<APlayerController>(GetController());
+			DisableInput(PlayerController);
+		}
+		else
+		{
+			FlashOnHitComponent->OnHit(GetMesh());
+		}
+	}
 }
 
 void AFCharacter::PostInitializeComponents()

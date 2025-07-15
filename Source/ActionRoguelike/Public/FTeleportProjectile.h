@@ -23,9 +23,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UParticleSystemComponent* ParticlePortalEnd;
 	
-	UFUNCTION()
-	void OnPortalEndParticleStoppedPlayingDelegate(UParticleSystemComponent* ParticleSystem);
-	
 	UPROPERTY(EditDefaultsOnly, Category = "Teleport")
 	float TeleportDelay;
 

@@ -22,45 +22,26 @@ AFTeleportProjectile::AFTeleportProjectile()
 }
 
 
-void AFTeleportProjectile::OnPortalEndParticleStoppedPlayingDelegate(UParticleSystemComponent* _)
-{
-	//Destroy();
-}
-
 void AFTeleportProjectile::Explode_Implementation()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("EXPLODE"));
-	}
 	GetWorldTimerManager().ClearTimer(TimerHandle_DelayedDetonate);
 	UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
 	ParticleComponent->DeactivateSystem();
 	ProjectileMovement->StopMovementImmediately();
 	SetActorEnableCollision(false);
 	ParticlePortalEnd->Activate();
-	//ParticlePortalEnd->OnSystemFinished.AddUniqueDynamic(this, &AFTeleportProjectile::OnPortalEndParticleStoppedPlayingDelegate);
 	FTimerHandle TimerHandle_DelayedTeleport;
 	GetWorldTimerManager().SetTimer(TimerHandle_DelayedTeleport, this, &AFTeleportProjectile::TeleportInstigator, TeleportDelay);
 }
 
 void AFTeleportProjectile::TeleportInstigator()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("START TELEPORT"));
-	}
-	
 	APawn* ActorToTeleport = GetInstigator();
 	if (ensure(ActorToTeleport))
 	{
 		ActorToTeleport->TeleportTo(GetActorLocation(), ActorToTeleport->GetActorRotation(), false, false);
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), TeleportSound, GetActorLocation());
 		Destroy(); 
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("InstigatorPawn is null"));
 	}
 }
 

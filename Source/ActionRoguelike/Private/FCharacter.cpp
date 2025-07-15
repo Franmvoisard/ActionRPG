@@ -100,7 +100,7 @@ void AFCharacter::MoveLateral(const FInputActionValue& InputActionValue)
 	ControlRotator.Pitch = 0.0f;
 	ControlRotator.Roll = 0.0f;
 	FVector RightVector = FRotationMatrix(ControlRotator).
-	 GetScaledAxis(EAxis::Y);
+	GetScaledAxis(EAxis::Y);
 	AddMovementInput(RightVector, InputActionValue.GetMagnitude());
 }
 

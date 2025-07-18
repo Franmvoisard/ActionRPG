@@ -80,6 +80,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	UFFlashOnHitComponent* FlashOnHitComponent;
 
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	UParticleSystem* AbilitySpawnParticle;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UFUNCTION()

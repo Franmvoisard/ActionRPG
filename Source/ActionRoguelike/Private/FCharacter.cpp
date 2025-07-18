@@ -11,6 +11,7 @@
 #include "FTeleportProjectile.h"
 #include "ActionRoguelike/FFlashOnHitComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 // Sets default values
 AFCharacter::AFCharacter()
 {
@@ -143,7 +144,7 @@ void AFCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClassToSpawn)
 	if (ensureAlways(ProjectileClassToSpawn))
 	{
 		const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-		
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AbilitySpawnParticle, HandLocation, FQuat::Identity.Rotator());
 
 		FActorSpawnParameters SpawnParameters;
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

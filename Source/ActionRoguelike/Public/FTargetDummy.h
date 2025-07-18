@@ -24,13 +24,13 @@ public:
 	UFFlashOnHitComponent* FlashOnHitComponent;
 	
 protected:
-
-	virtual void PostInitializeComponents() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void BeginPlay() override;
 	
+
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(EditDefaultsOnly)
 	UFAttributeComponent* AttributeComponent;
-	
 };

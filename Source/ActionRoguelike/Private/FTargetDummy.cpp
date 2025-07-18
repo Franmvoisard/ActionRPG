@@ -20,9 +20,14 @@ void AFTargetDummy::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponen
 	}
 }
 
-void AFTargetDummy::PostInitializeComponents()
+void AFTargetDummy::BeginPlay()
 {
-	Super::PostInitializeComponents();
+	Super::BeginPlay();
 	AttributeComponent->OnHealthChange.AddDynamic(this, &AFTargetDummy::OnHealthChanged);
 }
 
+void AFTargetDummy::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	AttributeComponent->OnHealthChange.RemoveDynamic(this, &AFTargetDummy::OnHealthChanged);
+}

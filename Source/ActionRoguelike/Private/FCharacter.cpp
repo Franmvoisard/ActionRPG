@@ -163,6 +163,7 @@ void AFCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClassToSpawn)
 		FHitResult HitResult;
 		
 		FVector TraceStart = CameraComp->GetComponentLocation();
+		DrawDebugSphere(GetWorld(), TraceStart, 5.0f, 12, FColor::Red, false, 2.0f);
 		FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * 5000;
 		GetWorld()->SweepSingleByObjectType(HitResult, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, CollisionShape, CollisionParams);
 		FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;

@@ -9,6 +9,7 @@
 class UProjectileMovementComponent;
 class USphereComponent;
 
+DECLARE_LOG_CATEGORY_EXTERN(Projectiles, Display, All);
 UCLASS(ABSTRACT)
 class ACTIONROGUELIKE_API AFProjectileBase : public AActor
 {
@@ -36,12 +37,14 @@ protected:
 	UParticleSystemComponent* ParticleComponent;
 
 	UFUNCTION()
-	virtual void OnActorHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Explode();
 	void PlaySpawnSound() const;
+	
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void PostInitializeComponents() override;
 	
 public:

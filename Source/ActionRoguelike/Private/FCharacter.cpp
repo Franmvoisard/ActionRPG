@@ -139,7 +139,7 @@ void AFCharacter::AOEAttack()
 	SpawnProjectile(AOEProjectileClass);
 }
 
-void AFCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClassToSpawn)
+void AFCharacter::SpawnProjectile(TSubclassOf<AFProjectileBase> ProjectileClassToSpawn)
 {
 	if (ensureAlways(ProjectileClassToSpawn))
 	{

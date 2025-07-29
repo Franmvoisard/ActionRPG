@@ -94,7 +94,7 @@ protected:
 	void PrimaryAttack();
 	void PrimaryAttack_TimeElapsed();
 	void AOEAttack();
-	void SpawnProjectile(TSubclassOf<AActor> ProjectileClass);
+	void SpawnProjectile(TSubclassOf<AFProjectileBase> ProjectileClass);
 	void Dash();
 	void Dash_TimeElapsed();
 

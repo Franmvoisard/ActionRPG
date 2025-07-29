@@ -11,15 +11,8 @@ UFInteractionComponent::UFInteractionComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	MaxInteractionDistance = 400;
 }
-
-
-// Called when the game starts
-void UFInteractionComponent::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 
 // Called every frame
 void UFInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -37,7 +30,7 @@ void UFInteractionComponent::PrimaryInteract()
 	FRotator EyeRotation;
 	Owner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 	
-	FVector End = EyeLocation + EyeRotation.Vector() * 1000;
+	FVector End = EyeLocation + EyeRotation.Vector() * MaxInteractionDistance;
 	FCollisionShape Shape;
 	float Radius = 30.0f;
 	Shape.SetSphere(Radius);

@@ -12,16 +12,15 @@
 #include "ActionRoguelike/FFlashOnHitComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-// Sets default values
-AFCharacter::AFCharacter()
-{
+
+
+AFCharacter::AFCharacter() {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->SetupAttachment(RootComponent);
-	
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComp->SetupAttachment(SpringArm) ;
 	InteractionComponent = CreateDefaultSubobject<UFInteractionComponent>(TEXT("Interaction Component"));
@@ -29,6 +28,8 @@ AFCharacter::AFCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
 	FlashOnHitComponent = CreateDefaultSubobject<UFFlashOnHitComponent>("Flash On Hit Component");
+	ProjectileTraceSphereRadius = 20.0f;
+	ProjectileMaxTraceDistance = 5000;
 }
 
 // Called when the game starts or when spawned
@@ -151,7 +152,7 @@ void AFCharacter::SpawnProjectile(TSubclassOf<AFProjectileBase> ProjectileClassT
 		SpawnParameters.Instigator = this;
 
 		FCollisionShape CollisionShape;
-		CollisionShape.SetSphere(20.0f);
+		CollisionShape.SetSphere(ProjectileTraceSphereRadius);
 
 		FCollisionQueryParams CollisionParams;
 		CollisionParams.AddIgnoredActor(this);
@@ -164,8 +165,8 @@ void AFCharacter::SpawnProjectile(TSubclassOf<AFProjectileBase> ProjectileClassT
 		FHitResult HitResult;
 		
 		FVector TraceStart = CameraComp->GetComponentLocation();
-		DrawDebugSphere(GetWorld(), TraceStart, 5.0f, 12, FColor::Red, false, 2.0f);
-		FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * 5000;
+		DrawDebugSphere(GetWorld(), TraceStart, ProjectileTraceSphereRadius, 12, FColor::Red, false, 2.0f);
+		FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * ProjectileMaxTraceDistance;
 		GetWorld()->SweepSingleByObjectType(HitResult, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, CollisionShape, CollisionParams);
 		FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
 		FRotator SpawnRotation = (Target - HandLocation).Rotation();

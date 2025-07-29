@@ -77,11 +77,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Abilities)
 	UFAttributeComponent* AttributeComponent;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	UPROPERTY(EditDefaultsOnly, Category = VFX)
 	UFFlashOnHitComponent* FlashOnHitComponent;
 
-	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	UPROPERTY(EditDefaultsOnly, Category = VFX)
 	UParticleSystem* AbilitySpawnParticle;
+
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	float ProjectileTraceSphereRadius;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	int ProjectileMaxTraceDistance;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

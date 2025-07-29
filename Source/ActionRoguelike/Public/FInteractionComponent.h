@@ -19,6 +19,7 @@ public:
 	void PrimaryInteract();
 
 protected:
-	virtual void BeginPlay() override;
-		
+
+	UPROPERTY(EditDefaultsOnly, Category = Interaction)
+	int MaxInteractionDistance;
 };

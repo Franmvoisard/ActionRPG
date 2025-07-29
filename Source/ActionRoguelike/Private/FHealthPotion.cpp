@@ -19,7 +19,6 @@ AFHealthPotion::AFHealthPotion()
 void AFHealthPotion::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AFHealthPotion::SetInteractionState(bool IsActive)

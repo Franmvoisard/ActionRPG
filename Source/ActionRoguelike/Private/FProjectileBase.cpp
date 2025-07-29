@@ -26,6 +26,10 @@ AFProjectileBase::AFProjectileBase()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->ProjectileGravityScale = 0.0f;
 	ProjectileMovement->bInitialVelocityInLocalSpace = true;
+
+	CameraShakeOnImpact = nullptr;
+	ShakeIgnoreAreaRadius = 200.0f;
+	ShakeImpactAreaRadius = 500.0f;
 }
 
 void AFProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -43,6 +47,7 @@ void AFProjectileBase::Explode_Implementation()
 	if (ensure(IsValid(this)))
 	{ 
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+		UGameplayStatics::PlayWorldCameraShake(GetWorld(), CameraShakeOnImpact, GetActorLocation(), ShakeIgnoreAreaRadius, ShakeImpactAreaRadius, 1.0f);
 		Destroy();
 	}
 }

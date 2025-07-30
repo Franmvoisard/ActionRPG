@@ -4,7 +4,7 @@
 
 #include "FTargetDummy.h"
 #include "FAttributeComponent.h"
-#include "ActionRoguelike/FFlashOnHitComponent.h"
+#include "FFlashOnHitComponent.h"
 AFTargetDummy::AFTargetDummy()
 {
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");

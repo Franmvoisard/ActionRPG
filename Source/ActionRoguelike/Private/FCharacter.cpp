@@ -9,8 +9,7 @@
 #include "FAttributeComponent.h"
 #include "FInteractionComponent.h"
 #include "FProjectileBase.h"
-#include "FTeleportProjectile.h"
-#include "ActionRoguelike/FFlashOnHitComponent.h"
+#include "FFlashOnHitComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 

@@ -1,5 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// Public Domain - 2025 Franco Voisard
+// This code is provided for educational purposes.
+// No rights reserved. Use freely.
 #include "ActionRoguelike/Public/FCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"

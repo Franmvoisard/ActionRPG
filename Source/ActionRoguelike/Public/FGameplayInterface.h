@@ -1,6 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+// Public Domain - 2025 Franco Voisard
+// This code is provided for educational purposes.
+// No rights reserved. Use freely.#pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"

@@ -23,7 +23,7 @@ void UFBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				APawn* AIPawn = OwnerAIController->GetPawn();
 				if (ensure(AIPawn))
 				{
-					const float DistanceToTarget = (TargetActor->GetActorLocation() - AIPawn->GetActorLocation()).Size();
+					const float DistanceToTarget = FVector::Distance(TargetActor->GetActorLocation(), AIPawn->GetActorLocation());
 					const bool bWithinRange = DistanceToTarget < AttackRange;
 					bool bHasSightOfTarget = false;
 					if (bWithinRange)

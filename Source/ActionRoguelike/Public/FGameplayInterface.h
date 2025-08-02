@@ -1,6 +1,7 @@
 // Public Domain - 2025 Franco Voisard
 // This code is provided for educational purposes.
 // No rights reserved. Use freely.#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"

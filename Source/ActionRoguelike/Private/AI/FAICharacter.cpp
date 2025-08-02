@@ -3,12 +3,15 @@
 
 #include "AI/FAICharacter.h"
 
+#include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Perception/PawnSensingComponent.h"
+
 // Sets default values
 AFAICharacter::AFAICharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+ 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
+ 	
 }
 
 // Called when the game starts or when spawned
@@ -18,17 +21,20 @@ void AFAICharacter::BeginPlay()
 	
 }
 
-// Called every frame
-void AFAICharacter::Tick(float DeltaTime)
+void AFAICharacter::PostInitializeComponents()
 {
-	Super::Tick(DeltaTime);
-
+	Super::PostInitializeComponents();
+	PawnSensingComponent->OnSeePawn.AddUniqueDynamic(this, &AFAICharacter::OnPawnSeen);
 }
 
-// Called to bind functionality to input
-void AFAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AFAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	if(AAIController* AIController = Cast<AAIController>(GetController()))
+	{
+		UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
+		BlackboardComponent->SetValueAsObject("TargetActor", Pawn);
+		DrawDebugString(GetWorld(),GetActorLocation(), "Player seen", nullptr, FColor::Red, 2.0f);
+	}
 }
+
 

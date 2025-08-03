@@ -9,12 +9,9 @@
 void AFAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	RunBehaviorTree(BehaviorTree);
-
-	if (APawn* MyPawn = UGameplayStatics::GetPlayerPawn(this, 0))
+	if (ensureMsgf(BehaviorTree, TEXT("BehaviorTree is not set, assign Behavior Tree in the AI Controller")))
 	{
-		GetBlackboardComponent()->SetValueAsVector("MoveToLocation", MyPawn->GetActorLocation());
-		GetBlackboardComponent()->SetValueAsObject("TargetActor", MyPawn);
+		RunBehaviorTree(BehaviorTree);
 	}
 }
  

@@ -14,21 +14,23 @@ bool UFAttributeComponent::IsAlive() const
 	return Health > 0.0f;
 }
 
+bool UFAttributeComponent::IsFullHealth() const
+{
+	return Health == MaxHealth;
+}
+
+float UFAttributeComponent::GetMaxHealth() const
+{
+	return MaxHealth;
+}
+
 bool UFAttributeComponent::ApplyHealthChange(float Delta)
 {
-	if (Delta > 0.0f) //Healing
-	{
-		//Ignore healing if our health is already above the MaxHealth
-		if (Health >= MaxHealth) return false;
-	}
-	else
-	{
-		//Ignore damage if our health is already 0
-		if (Health <= 0.0f) return false;
-	}
+	const float OldHealth = Health;
+	Health = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
 	
-	Health += Delta;
+	const float ActualDelta = Health - OldHealth;
 	Health = FMath::Clamp(Health, 0.0f, MaxHealth);
-	OnHealthChange.Broadcast(nullptr, this, Health, Delta);
-	return true;
+	OnHealthChange.Broadcast(nullptr, this, Health, ActualDelta);
+	return ActualDelta != 0.0f;
 }

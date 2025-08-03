@@ -90,6 +90,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	int ProjectileMaxTraceDistance;
 
+	UPROPERTY(VisibleAnywhere, Category = Projectile)
+	FName HandSocketName;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UFUNCTION()

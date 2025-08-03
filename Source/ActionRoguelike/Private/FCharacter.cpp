@@ -30,6 +30,7 @@ AFCharacter::AFCharacter() {
 	FlashOnHitComponent = CreateDefaultSubobject<UFFlashOnHitComponent>("Flash On Hit Component");
 	ProjectileTraceSphereRadius = 20.0f;
 	ProjectileMaxTraceDistance = 5000;
+	HandSocketName = "Muzzle_01";
 }
 
 // Called when the game starts or when spawned
@@ -144,7 +145,7 @@ void AFCharacter::SpawnProjectile(TSubclassOf<AFProjectileBase> ProjectileClassT
 {
 	if (ensureAlways(ProjectileClassToSpawn))
 	{
-		const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		const FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AbilitySpawnParticle, HandLocation, FQuat::Identity.Rotator());
 
 		FActorSpawnParameters SpawnParameters;

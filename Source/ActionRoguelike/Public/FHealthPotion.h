@@ -39,5 +39,7 @@ protected:
 	void ResetInteractionTimer_Elapsed();
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 	bool IsInteractable;
+
+private:
 	bool HealInstigator(const APawn* InstigatorToHeal);
 };

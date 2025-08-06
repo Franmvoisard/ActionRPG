@@ -4,6 +4,7 @@
 #include "AI/FAICharacter.h"
 
 #include "AIController.h"
+#include "FAttributeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/PawnSensingComponent.h"
 
@@ -11,7 +12,7 @@
 AFAICharacter::AFAICharacter()
 {
  	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
- 	
+	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
 }
 
 // Called when the game starts or when spawned

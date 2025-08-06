@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FAttributeComponent.h"
 #include "GameFramework/Character.h"
 #include "FAICharacter.generated.h"
 
@@ -22,6 +23,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "AI")
 	UPawnSensingComponent* PawnSensingComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Attributes")
+	UFAttributeComponent* AttributeComponent;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);

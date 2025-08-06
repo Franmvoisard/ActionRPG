@@ -20,6 +20,7 @@ public:
 	bool IsAlive() const;
 	bool IsFullHealth() const;
 	float GetMaxHealth() const;
+	float GetHealth() const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")

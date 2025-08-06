@@ -24,6 +24,11 @@ float UFAttributeComponent::GetMaxHealth() const
 	return MaxHealth;
 }
 
+float UFAttributeComponent::GetHealth() const
+{
+	return Health;
+}
+
 bool UFAttributeComponent::ApplyHealthChange(float Delta)
 {
 	const float OldHealth = Health;

@@ -6,13 +6,19 @@
 void UFBTService_CheckLowHealth::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
-
-	if (AActor* OwnerActor = OwnerComp.GetAIOwner())
+	if (AAIController* OwnerActorController = OwnerComp.GetAIOwner())
 	{
-		if (UFAttributeComponent* HealthAttribute = OwnerActor->FindComponentByClass<UFAttributeComponent>())
+		if(AActor* OwnerActor = OwnerActorController->GetPawn())
 		{
-			const bool bIsLowHealth = HealthAttribute->GetMaxHealth() / HealthAttribute->GetHealth() < NormalizedLowHealthThreshold;
-			OwnerComp.GetBlackboardComponent()->SetValueAsBool(IsLowHealthKey.SelectedKeyName, bIsLowHealth);
+			if (UFAttributeComponent* HealthAttribute = OwnerActor->FindComponentByClass<UFAttributeComponent>())
+			{
+				const bool bIsLowHealth = HealthAttribute->GetHealth() / HealthAttribute->GetMaxHealth() < NormalizedLowHealthThreshold;
+				OwnerComp.GetBlackboardComponent()->SetValueAsBool(IsLowHealthKey.SelectedKeyName, bIsLowHealth);
+			}
 		}
+	}
+	else 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No AAIController found on %s"), *OwnerComp.GetAIOwner()->GetName());
 	}
 }

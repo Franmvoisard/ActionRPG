@@ -22,5 +22,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	FColor FlashColor;
 
+	UFUNCTION(BlueprintCallable, Category = "VFX")
 	void OnHit(UMeshComponent* MeshComponent);
 };

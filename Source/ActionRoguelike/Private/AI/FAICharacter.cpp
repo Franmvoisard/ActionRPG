@@ -19,7 +19,6 @@ AFAICharacter::AFAICharacter()
 void AFAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AFAICharacter::PostInitializeComponents()

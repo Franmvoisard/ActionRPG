@@ -4,6 +4,7 @@
 #include "AI/FAICharacter.h"
 
 #include "AIController.h"
+#include "BrainComponent.h"
 #include "FAttributeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/PawnSensingComponent.h"
@@ -26,6 +27,7 @@ void AFAICharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	PawnSensingComponent->OnSeePawn.AddUniqueDynamic(this, &AFAICharacter::OnPawnSeen);
+	AttributeComponent->OnHealthChange.AddDynamic(this, &AFAICharacter::OnHealthChanged);
 }
 
 void AFAICharacter::OnPawnSeen(APawn* Pawn)
@@ -35,6 +37,25 @@ void AFAICharacter::OnPawnSeen(APawn* Pawn)
 		UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
 		BlackboardComponent->SetValueAsObject("TargetActor", Pawn);
 		DrawDebugString(GetWorld(),GetActorLocation(), "Player seen", nullptr, FColor::Red, 2.0f);
+	}
+}
+
+void AFAICharacter::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent* OwnerAttributeComponent, float NewHealth, float Delta)
+{
+	if (Delta < 0.0f)
+	{
+		if (NewHealth <= 0)
+		{
+			if (AAIController* AIController = Cast<AAIController>(GetController()))
+			{
+				AIController->GetBrainComponent()->StopLogic("Killed");
+			}
+			
+			//Ragdoll and die
+			GetMesh()->SetAllBodiesSimulatePhysics(true);
+			GetMesh()->SetCollisionProfileName("Ragdoll");
+			SetLifeSpan(10.0f);
+		}
 	}
 }
 

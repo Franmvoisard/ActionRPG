@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "FAICharacter.generated.h"
 
+class UFWorldUserWidget;
 class UPawnSensingComponent;
 UCLASS()
 class ACTIONROGUELIKE_API AFAICharacter : public ACharacter
@@ -26,6 +27,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Attributes")
 	UFAttributeComponent* AttributeComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UFWorldUserWidget> HealthBarWidgetClass;
+
+	UPROPERTY()
+	UFWorldUserWidget* ActiveHealthBar;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);

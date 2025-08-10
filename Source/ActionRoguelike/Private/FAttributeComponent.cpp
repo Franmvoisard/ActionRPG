@@ -17,6 +17,16 @@ UFAttributeComponent* UFAttributeComponent::GetAttributes(AActor* FromActor)
 	}
 	return nullptr;
 }
+
+bool UFAttributeComponent::IsActorAlive(AActor* FromActor)
+{
+	if (UFAttributeComponent* ActorAttributeComponent = GetAttributes(FromActor))
+	{
+		return ActorAttributeComponent->IsAlive();
+	}
+	return false;
+}
+
 bool UFAttributeComponent::IsAlive() const
 {
 	return Health > 0.0f;

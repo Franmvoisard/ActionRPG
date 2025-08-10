@@ -37,12 +37,9 @@ void AFGameModeBase::OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* Qu
 	for (TActorIterator<AFAICharacter> It(GetWorld()); It; ++It)
 	{
 		AFAICharacter* Bot = *It;
-		if (UFAttributeComponent* BotAttributeComponent = UFAttributeComponent::GetAttributes(Bot))
+		if (UFAttributeComponent::IsActorAlive(Bot))
 		{
-			if (BotAttributeComponent->IsAlive())
-			{
-				NumberOfAliveBots++;
-			}
+			NumberOfAliveBots++;
 		}
 	}
 	int MaxBotCount = 10;

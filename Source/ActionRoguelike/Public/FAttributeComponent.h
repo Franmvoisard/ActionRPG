@@ -17,6 +17,9 @@ public:
 	UFAttributeComponent();
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	static UFAttributeComponent* GetAttributes(AActor* FromActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static bool IsActorAlive(AActor* FromActor);
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);

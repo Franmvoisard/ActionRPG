@@ -48,7 +48,7 @@ void AFExplosiveBarrel::OnBarrelHit(UPrimitiveComponent* HitComponent, AActor* O
 	{
 		if (UFAttributeComponent* AttributeComponent = OtherActor->GetComponentByClass<UFAttributeComponent>())
 		{
-			AttributeComponent->ApplyHealthChange(-20.0f);	
+			AttributeComponent->ApplyHealthChange(this, -20.0f);	
 		}
 		UE_LOG(LogTemp, Warning, TEXT("ExplosiveBarrel overlapped with %s"), *OtherActor->GetName());
 		Explode();

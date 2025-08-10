@@ -15,7 +15,7 @@ EBTNodeResult::Type UFBTTask_HealSelf::ExecuteTask(UBehaviorTreeComponent& Owner
 		{
 			if (UFAttributeComponent* AttributeComponent = OwnerActor->GetComponentByClass<UFAttributeComponent>())
 			{
-				AttributeComponent->ApplyHealthChange(AttributeComponent->GetMaxHealth());
+				AttributeComponent->ApplyHealthChange(OwnerActor, AttributeComponent->GetMaxHealth());
 			}
 		}
 	}

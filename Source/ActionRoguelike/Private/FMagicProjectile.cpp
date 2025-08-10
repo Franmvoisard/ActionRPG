@@ -32,7 +32,7 @@ void AFMagicProjectile::OnActorBeginOverlap_Implementation(AActor* OverlappedAct
 	{
 		if (UFAttributeComponent* OtherActorAttributeComponent = OtherActor->GetComponentByClass<UFAttributeComponent>())
 		{
-			OtherActorAttributeComponent->ApplyHealthChange(-ProjectileDamage);
+			OtherActorAttributeComponent->ApplyHealthChange(GetInstigator(), -ProjectileDamage);
 			Explode_Implementation();
 		}
 	}

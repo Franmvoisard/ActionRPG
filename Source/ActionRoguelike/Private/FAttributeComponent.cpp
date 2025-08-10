@@ -29,13 +29,13 @@ float UFAttributeComponent::GetHealth() const
 	return Health;
 }
 
-bool UFAttributeComponent::ApplyHealthChange(float Delta)
+bool UFAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 	const float OldHealth = Health;
 	Health = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
 	
 	const float ActualDelta = Health - OldHealth;
 	Health = FMath::Clamp(Health, 0.0f, MaxHealth);
-	OnHealthChange.Broadcast(nullptr, this, Health, ActualDelta);
+	OnHealthChange.Broadcast(InstigatorActor, this, Health, ActualDelta);
 	return ActualDelta != 0.0f;
 }

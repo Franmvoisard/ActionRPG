@@ -13,6 +13,7 @@ AFAICharacter::AFAICharacter()
 {
  	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
 	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned

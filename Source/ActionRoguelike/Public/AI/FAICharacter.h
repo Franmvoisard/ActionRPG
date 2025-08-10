@@ -29,8 +29,11 @@ protected:
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent* OwnerAttributeComponent, float NewHealth, float Delta);
+
+	void SetTargetActor(AActor* TargetActor);
 	virtual void PostInitializeComponents() override;
 };
 	

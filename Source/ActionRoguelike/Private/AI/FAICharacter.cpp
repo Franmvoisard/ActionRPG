@@ -30,13 +30,11 @@ void AFAICharacter::PostInitializeComponents()
 	AttributeComponent->OnHealthChange.AddDynamic(this, &AFAICharacter::OnHealthChanged);
 }
 
-void AFAICharacter::OnPawnSeen(APawn* Pawn)
+void AFAICharacter::SetTargetActor(AActor* TargetActor)
 {
-	if(AAIController* AIController = Cast<AAIController>(GetController()))
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
-		UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
-		BlackboardComponent->SetValueAsObject("TargetActor", Pawn);
-		DrawDebugString(GetWorld(),GetActorLocation(), "Player seen", nullptr, FColor::Red, 2.0f);
+		AIController->GetBlackboardComponent()->SetValueAsObject("TargetActor", TargetActor);
 	}
 }
 
@@ -44,6 +42,10 @@ void AFAICharacter::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponen
 {
 	if (Delta < 0.0f)
 	{
+		if (InstigatorActor != this)
+		{
+			SetTargetActor(InstigatorActor);
+		}
 		if (NewHealth <= 0)
 		{
 			if (AAIController* AIController = Cast<AAIController>(GetController()))
@@ -57,6 +59,12 @@ void AFAICharacter::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponen
 			SetLifeSpan(10.0f);
 		}
 	}
+}
+
+void AFAICharacter::OnPawnSeen(APawn* Pawn)
+{
+	SetTargetActor(Pawn);	
+	DrawDebugString(GetWorld(),GetActorLocation(), "Player seen", nullptr, FColor::Red, 2.0f);
 }
 
 

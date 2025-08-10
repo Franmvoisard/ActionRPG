@@ -29,7 +29,7 @@ EBTNodeResult::Type UFBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& O
 		AActor* TargetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("TargetActor"));
 
 		if (TargetActor == nullptr) return EBTNodeResult::Failed;
-		if (UFAttributeComponent::IsActorAlive(TargetActor))
+		if (!UFAttributeComponent::IsActorAlive(TargetActor))
 		{
 			return EBTNodeResult::Failed;
 		}

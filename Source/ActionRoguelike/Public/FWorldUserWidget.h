@@ -20,6 +20,9 @@ protected:
 
 	UPROPERTY(meta=(BindWidget))
 	USizeBox* ParentSizeBox;
+	
+	UPROPERTY(EditDefaultsOnly)
+	FVector WorldOffset;
 
 public:
 	UPROPERTY(BlueprintReadOnly, Category = UI)

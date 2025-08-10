@@ -9,6 +9,14 @@ UFAttributeComponent::UFAttributeComponent()
 	MaxHealth = 100.0f;
 }
 
+UFAttributeComponent* UFAttributeComponent::GetAttributes(AActor* FromActor)
+{
+	if (FromActor)
+	{
+		return FromActor->FindComponentByClass<UFAttributeComponent>();
+	}
+	return nullptr;
+}
 bool UFAttributeComponent::IsAlive() const
 {
 	return Health > 0.0f;

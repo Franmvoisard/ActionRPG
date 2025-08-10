@@ -37,7 +37,7 @@ void AFGameModeBase::OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* Qu
 	for (TActorIterator<AFAICharacter> It(GetWorld()); It; ++It)
 	{
 		AFAICharacter* Bot = *It;
-		if (UFAttributeComponent* BotAttributeComponent = Bot->GetComponentByClass<UFAttributeComponent>())
+		if (UFAttributeComponent* BotAttributeComponent = UFAttributeComponent::GetAttributes(Bot))
 		{
 			if (BotAttributeComponent->IsAlive())
 			{

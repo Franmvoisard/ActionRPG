@@ -15,12 +15,27 @@ class ACTIONROGUELIKE_API UFAttributeComponent : public UActorComponent
 
 public:	
 	UFAttributeComponent();
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static UFAttributeComponent* GetAttributes(AActor* FromActor);
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
+
+	UPROPERTY(BlueprintAssignable, Category = "Attributes")
+	FOnHealthChange OnHealthChange;
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool IsAlive() const;
+	
+	UFUNCTION(BlueprintCallable)
 	bool IsFullHealth() const;
+	
+	UFUNCTION(BlueprintCallable)
 	float GetMaxHealth() const;
+	
+	UFUNCTION(BlueprintCallable)
 	float GetHealth() const;
+	
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
@@ -28,11 +43,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float MaxHealth;
-
-public:	
-	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
-
-	UPROPERTY(BlueprintAssignable, Category = "Attributes")
-	FOnHealthChange OnHealthChange;
 };

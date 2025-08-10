@@ -13,7 +13,7 @@ EBTNodeResult::Type UFBTTask_HealSelf::ExecuteTask(UBehaviorTreeComponent& Owner
 	{
 		if (AActor* OwnerActor = AIController->GetPawn())
 		{
-			if (UFAttributeComponent* AttributeComponent = OwnerActor->GetComponentByClass<UFAttributeComponent>())
+			if (UFAttributeComponent* AttributeComponent = UFAttributeComponent::GetAttributes(OwnerActor))
 			{
 				AttributeComponent->ApplyHealthChange(OwnerActor, AttributeComponent->GetMaxHealth());
 			}

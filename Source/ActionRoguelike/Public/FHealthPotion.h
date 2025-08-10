@@ -41,5 +41,5 @@ protected:
 	bool IsInteractable;
 
 private:
-	bool HealInstigator(const APawn* InstigatorToHeal);
+	bool HealInstigator(APawn* InstigatorToHeal);
 };

@@ -53,9 +53,10 @@ void AFHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	}	
 }
 
-bool AFHealthPotion::HealInstigator(const APawn* InstigatorToHeal)
+bool AFHealthPotion::HealInstigator(APawn* InstigatorToHeal)
 {
-	if (UFAttributeComponent* InstigatorAttributeComponent = InstigatorToHeal->GetComponentByClass<UFAttributeComponent>())
+	if (!InstigatorToHeal) return false;
+	if (UFAttributeComponent* InstigatorAttributeComponent = UFAttributeComponent::GetAttributes(InstigatorToHeal))
 	{
 		return InstigatorAttributeComponent->ApplyHealthChange(this, InstigatorAttributeComponent->GetMaxHealth());
 	}

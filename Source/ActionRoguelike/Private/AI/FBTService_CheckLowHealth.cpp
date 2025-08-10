@@ -10,7 +10,7 @@ void UFBTService_CheckLowHealth::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	{
 		if(AActor* OwnerActor = OwnerActorController->GetPawn())
 		{
-			if (UFAttributeComponent* HealthAttribute = OwnerActor->FindComponentByClass<UFAttributeComponent>())
+			if (UFAttributeComponent* HealthAttribute = UFAttributeComponent::GetAttributes(OwnerActor))
 			{
 				const bool bIsLowHealth = HealthAttribute->GetHealth() / HealthAttribute->GetMaxHealth() < NormalizedLowHealthThreshold;
 				OwnerComp.GetBlackboardComponent()->SetValueAsBool(IsLowHealthKey.SelectedKeyName, bIsLowHealth);

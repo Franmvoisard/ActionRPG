@@ -3,6 +3,8 @@
 
 #include "FGameModeBase.h"
 
+#include "EngineUtils.h"
+#include "AI/FAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
 AFGameModeBase::AFGameModeBase()
@@ -30,6 +32,28 @@ void AFGameModeBase::OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* Qu
 		return;
 	}
 
+	int NumberOfAliveBots = 0;
+
+	for (TActorIterator<AFAICharacter> It(GetWorld()); It; ++It)
+	{
+		AFAICharacter* Bot = *It;
+		if (UFAttributeComponent* BotAttributeComponent = Bot->GetComponentByClass<UFAttributeComponent>())
+		{
+			if (BotAttributeComponent->IsAlive())
+			{
+				NumberOfAliveBots++;
+			}
+		}
+	}
+	int MaxBotCount = 10;
+	
+	if (DifficultyCurve)
+	{
+		MaxBotCount = DifficultyCurve->GetFloatValue(GetWorld()->GetTimeSeconds());
+	}
+	
+	if (NumberOfAliveBots >= MaxBotCount) return;
+	
 	TArray<FVector> SpawnLocations = QueryInstance->GetResultsAsLocations();
 	if (SpawnLocations.Num() > 0)
 	{

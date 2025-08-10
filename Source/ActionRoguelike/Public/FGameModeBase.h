@@ -19,6 +19,7 @@ class ACTIONROGUELIKE_API AFGameModeBase : public AGameModeBase
 public:
 	AFGameModeBase();
 	virtual void StartPlay() override;
+	
 protected:
 	FTimerHandle TimerHandle_SpawnBots;
 
@@ -31,6 +32,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UEnvQuery* SpawnBotQuery;
 
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UCurveFloat* DifficultyCurve;
+	
 	UFUNCTION()
 	void OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 

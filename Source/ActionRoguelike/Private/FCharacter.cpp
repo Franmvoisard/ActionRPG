@@ -50,6 +50,11 @@ void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	}
 }
 
+void AFCharacter::HealSelf(float Amount)
+{
+	AttributeComponent->ApplyHealthChange(this, Amount);
+}
+
 void AFCharacter::BeginPlay()
 {
 	Super::BeginPlay();

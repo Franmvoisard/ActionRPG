@@ -40,4 +40,7 @@ protected:
 
 	UFUNCTION()
 	void SpawnBotTimer_Elapsed();
+
+	UFUNCTION(Exec)
+	void KillAllBots();
 };

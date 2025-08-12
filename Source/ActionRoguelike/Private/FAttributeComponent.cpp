@@ -57,3 +57,8 @@ bool UFAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	OnHealthChange.Broadcast(InstigatorActor, this, Health, ActualDelta);
 	return ActualDelta != 0.0f;
 }
+
+bool UFAttributeComponent::Kill(AActor* InstigatorActor)
+{
+	return ApplyHealthChange(InstigatorActor, -MaxHealth);
+}

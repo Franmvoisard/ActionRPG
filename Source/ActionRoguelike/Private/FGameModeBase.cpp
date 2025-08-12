@@ -24,6 +24,21 @@ void AFGameModeBase::SpawnBotTimer_Elapsed()
 	QueryInstance->GetOnQueryFinishedEvent().AddDynamic(this, &AFGameModeBase::OnSpawnQueryCompleted);
 }
 
+void AFGameModeBase::KillAllBots()
+{
+	for (TActorIterator<AFAICharacter> It(GetWorld()); It; ++It)
+	{
+		AFAICharacter* Bot = *It;
+		if (UFAttributeComponent* AttributeComponent = UFAttributeComponent::GetAttributes(Bot))
+		{
+			if (AttributeComponent->IsAlive())
+			{
+				AttributeComponent->Kill(this);
+			}	
+		}
+	}
+}
+
 void AFGameModeBase::OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
 	if (QueryStatus != EEnvQueryStatus::Success)

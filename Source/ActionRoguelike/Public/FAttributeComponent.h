@@ -24,6 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool Kill(AActor* InstigatorActor);
+	
 	UPROPERTY(BlueprintAssignable, Category = "Attributes")
 	FOnHealthChange OnHealthChange;
 	

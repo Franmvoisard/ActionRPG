@@ -4,12 +4,14 @@
 #include "FGameModeBase.h"
 
 #include "EngineUtils.h"
+#include "FCharacter.h"
 #include "AI/FAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
 AFGameModeBase::AFGameModeBase()
 {
 	SpawnTimerInterval = 2.0f;
+	PlayerRespawnDelay= 2.2f;
 }
 
 void AFGameModeBase::StartPlay()
@@ -70,5 +72,28 @@ void AFGameModeBase::OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* Qu
 	if (SpawnLocations.Num() > 0)
 	{
 		GetWorld()->SpawnActor<AActor>(MinionClass, SpawnLocations[0], FRotator::ZeroRotator);
+	}
+}
+
+void AFGameModeBase::OnActorKilled(AActor* Victim, AActor* Killer)
+{
+	AFCharacter* Player = Cast<AFCharacter>(Victim);
+	if (Player)
+	{
+		FTimerHandle TimerHandle_RespawnDelay;
+		FTimerDelegate Delegate_RespawnDelay;
+		Delegate_RespawnDelay.BindUObject(this, &AFGameModeBase::RespawnPlayerElapsed, Player->GetController());
+		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate_RespawnDelay, PlayerRespawnDelay, false);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Player %s killed by %s"), *GetNameSafe(Victim), *GetNameSafe(Killer));
+}
+
+void AFGameModeBase::RespawnPlayerElapsed(AController* Controller)
+{
+	if (ensure(Controller))
+	{
+		Controller->UnPossess();
+		RestartPlayer(Controller);
 	}
 }

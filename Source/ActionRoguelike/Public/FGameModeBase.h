@@ -19,6 +19,7 @@ class ACTIONROGUELIKE_API AFGameModeBase : public AGameModeBase
 public:
 	AFGameModeBase();
 	virtual void StartPlay() override;
+	virtual void OnActorKilled(AActor* Victim, AActor* Killer);
 	
 protected:
 	FTimerHandle TimerHandle_SpawnBots;
@@ -34,7 +35,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UCurveFloat* DifficultyCurve;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	float PlayerRespawnDelay;
+
 	UFUNCTION()
 	void OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
@@ -43,4 +47,7 @@ protected:
 
 	UFUNCTION(Exec)
 	void KillAllBots();
+
+	UFUNCTION()
+	void RespawnPlayerElapsed(AController* Controller);
 };

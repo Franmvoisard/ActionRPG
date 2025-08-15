@@ -3,6 +3,8 @@
 // No rights reserved. Use freely.
 #include "FAttributeComponent.h"
 
+#include "FGameModeBase.h"
+
 UFAttributeComponent::UFAttributeComponent()
 {
 	Health = 100.0f;
@@ -57,6 +59,13 @@ bool UFAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	const float ActualDelta = Health - OldHealth;
 	Health = FMath::Clamp(Health, 0.0f, MaxHealth);
 	OnHealthChange.Broadcast(InstigatorActor, this, Health, ActualDelta);
+	if (ActualDelta < 0.0f && Health == 0.0f)
+	{
+		if (AFGameModeBase* GameMode = Cast<AFGameModeBase>(GetWorld()->GetAuthGameMode()))
+		{
+			GameMode->OnActorKilled(GetOwner(), InstigatorActor);
+		}
+	}
 	return ActualDelta != 0.0f;
 }
 

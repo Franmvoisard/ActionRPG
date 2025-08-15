@@ -16,11 +16,6 @@ AFHealthPotion::AFHealthPotion()
 	IsInteractable = true;
 }
 
-// Called when the game starts or when spawned
-void AFHealthPotion::BeginPlay()
-{
-	Super::BeginPlay();
-}
 
 void AFHealthPotion::SetInteractionState(bool IsActive)
 {

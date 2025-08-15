@@ -89,9 +89,3 @@ void AFProjectileBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 	SphereComponent->OnComponentHit.RemoveDynamic(this, &AFProjectileBase::OnActorHit);
 }
-
-// Called every frame
-void AFProjectileBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}

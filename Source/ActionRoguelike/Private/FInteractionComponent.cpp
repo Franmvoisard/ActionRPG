@@ -15,12 +15,6 @@ UFInteractionComponent::UFInteractionComponent()
 	MaxInteractionDistance = 400;
 }
 
-// Called every frame
-void UFInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
 void UFInteractionComponent::PrimaryInteract()
 {
 	FCollisionObjectQueryParams ObjectQueryParams;

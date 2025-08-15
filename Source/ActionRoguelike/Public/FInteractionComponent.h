@@ -16,7 +16,6 @@ class ACTIONROGUELIKE_API UFInteractionComponent : public UActorComponent
 public:	
 	
 	UFInteractionComponent();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void PrimaryInteract();
 
 protected:

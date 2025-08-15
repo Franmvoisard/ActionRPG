@@ -60,10 +60,3 @@ void AFExplosiveBarrel::Explode()
 	RadialForceComponent->FireImpulse();
 	ParticleComponent->Activate();
 }
-
-// Called every frame
-void AFExplosiveBarrel::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-

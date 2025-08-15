@@ -38,5 +38,4 @@ protected:
 
 public:
 	AFExplosiveBarrel();
-	virtual void Tick(float DeltaTime) override;
 };

@@ -34,7 +34,6 @@ public:
 	AFHealthPotion();
 
 protected:
-	virtual void BeginPlay() override;
 	void SetInteractionState(bool IsActive);
 	void ResetInteractionTimer_Elapsed();
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;

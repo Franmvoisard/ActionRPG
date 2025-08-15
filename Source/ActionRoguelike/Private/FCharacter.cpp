@@ -89,11 +89,6 @@ void AFCharacter::PostInitializeComponents()
 	AttributeComponent->OnHealthChange.AddDynamic(this, &AFCharacter::OnHealthChanged);
 }
 
-void AFCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void AFCharacter::MoveForward(const FInputActionValue& InputActionValue)
 {
 	FRotator ControlRotator = GetControlRotation();

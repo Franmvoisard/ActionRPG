@@ -21,13 +21,3 @@ void AFItemChest::Interact_Implementation(APawn* InstigatorPawn)
 	LidMesh->SetRelativeRotation(FRotator(110, 0, 0));
 }
 
-void AFItemChest::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void AFItemChest::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-

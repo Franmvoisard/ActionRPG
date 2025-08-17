@@ -3,6 +3,7 @@
 // No rights reserved. Use freely.
 #include "FMagicProjectile.h"
 #include "FAttributeComponent.h"
+#include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 AFMagicProjectile::AFMagicProjectile()
@@ -16,7 +17,7 @@ AFMagicProjectile::AFMagicProjectile()
 void AFMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	this->OnActorBeginOverlap.AddDynamic(this, &AFMagicProjectile::OnActorBeginOverlap_Implementation);
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AFMagicProjectile::OnActorBeginOverlap_Implementation);
 }
 
 void AFMagicProjectile::Explode_Implementation()
@@ -25,9 +26,11 @@ void AFMagicProjectile::Explode_Implementation()
 	Super::Explode_Implementation();
 }
 
-void AFMagicProjectile::OnActorBeginOverlap_Implementation(AActor* OverlappedActor, AActor* OtherActor)
+void AFMagicProjectile::OnActorBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+									   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
 {
 	UE_LOG(LogTemp, Log, TEXT("Overlapped"));
+	
 	if (OtherActor != GetInstigator())
 	{
 		if (UFAttributeComponent* OtherActorAttributeComponent = OtherActor->GetComponentByClass<UFAttributeComponent>())

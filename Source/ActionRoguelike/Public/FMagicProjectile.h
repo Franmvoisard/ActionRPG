@@ -19,7 +19,8 @@ public:
 protected:
 
 	UFUNCTION()
-	void OnActorBeginOverlap_Implementation(AActor* OverlappedActor, AActor* OtherActor);
+	void OnActorBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+									   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

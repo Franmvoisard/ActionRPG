@@ -9,6 +9,8 @@
 #include "FWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/PawnSensingComponent.h"
 
 AFAICharacter::AFAICharacter()
@@ -16,6 +18,8 @@ AFAICharacter::AFAICharacter()
  	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
 	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
 void AFAICharacter::PostInitializeComponents()
@@ -62,6 +66,8 @@ void AFAICharacter::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponen
 			//Ragdoll and die
 			GetMesh()->SetAllBodiesSimulatePhysics(true);
 			GetMesh()->SetCollisionProfileName("Ragdoll");
+			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			GetCharacterMovement()->DisableMovement();
 			SetLifeSpan(10.0f);
 		}
 	}

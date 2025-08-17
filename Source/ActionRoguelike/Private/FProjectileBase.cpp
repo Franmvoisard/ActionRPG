@@ -34,7 +34,6 @@ AFProjectileBase::AFProjectileBase()
 
 void AFProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	
 	UE_LOGFMT(Projectiles, Display, "Projectile hit with actor `{ActorName}` and component `{ComponentName}`, instigator was `{Instigator}`", *OtherActor->GetName(), *OtherComp->GetName(), GetInstigator() != nullptr ? *GetInstigator()->GetName() : TEXT("null"));
 	if (GetInstigator() != OtherActor)
 	{

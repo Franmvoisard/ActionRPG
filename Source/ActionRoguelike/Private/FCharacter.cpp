@@ -13,7 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-
+static FAutoConsoleVariable CVarDebugDrawEnabled(TEXT("ar.Projectiles.DebugDrawEnabled"), false, TEXT("Enable debug draw for projectiles"), ECVF_Cheat); 
 AFCharacter::AFCharacter() {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -166,7 +166,10 @@ void AFCharacter::SpawnProjectile(TSubclassOf<AFProjectileBase> ProjectileClassT
 		FHitResult HitResult;
 		
 		FVector TraceStart = CameraComp->GetComponentLocation();
-		DrawDebugSphere(GetWorld(), TraceStart, ProjectileTraceSphereRadius, 12, FColor::Red, false, 2.0f);
+		if (CVarDebugDrawEnabled->GetBool())
+		{
+			DrawDebugSphere(GetWorld(), TraceStart, ProjectileTraceSphereRadius, 12, FColor::Red, false, 2.0f);
+		}
 		FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * ProjectileMaxTraceDistance;
 		GetWorld()->SweepSingleByObjectType(HitResult, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, CollisionShape, CollisionParams);
 		FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;

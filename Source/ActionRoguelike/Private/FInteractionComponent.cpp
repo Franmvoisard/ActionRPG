@@ -3,14 +3,12 @@
 // No rights reserved. Use freely.
 
 #include "FInteractionComponent.h"
-
 #include "FGameplayInterface.h"
 
+static TAutoConsoleVariable<bool> CVarDebugDrawInteraction(TEXT("ar.DebugInteraction"), false, TEXT("Enable interaction drawing."), ECVF_Cheat);
 // Sets default values for this component's properties
 UFInteractionComponent::UFInteractionComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	MaxInteractionDistance = 400;
 }
@@ -31,21 +29,26 @@ void UFInteractionComponent::PrimaryInteract()
 	Shape.SetSphere(Radius);
 	TArray<FHitResult> Hits;
 	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
-	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
 	 
+	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
+	AActor* InteractableActor = nullptr;
 	for(FHitResult Hit : Hits)
 	{
 		if (AActor* HitActor = Hit.GetActor())
 		{
 			if(HitActor->Implements<UFGameplayInterface>())
 			{
+				InteractableActor = HitActor;
 				APawn* MyPawn = Cast<APawn>(Owner);
 				IFGameplayInterface::Execute_Interact(HitActor, MyPawn);
 				break;
 			}	
 		}
-		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, LineColor, false, 2.0f);
 	}
-	DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f,0, 2.0f);
+	if (InteractableActor && CVarDebugDrawInteraction.GetValueOnGameThread())
+	{
+		DrawDebugSphere(GetWorld(), Hits.Last().ImpactPoint, Radius, 32, LineColor, false, 2.0f);
+		DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f,0, 2.0f);
+	}
 }
 

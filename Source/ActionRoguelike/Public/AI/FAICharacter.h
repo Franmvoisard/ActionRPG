@@ -9,15 +9,21 @@
 
 class UFWorldUserWidget;
 class UPawnSensingComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnKilled, AFAICharacter*, Victim, AActor*, Killer);
+
 UCLASS()
 class ACTIONROGUELIKE_API AFAICharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+	
 public:
 	// Sets default values for this character's properties
 	AFAICharacter();
 
+	UPROPERTY(BlueprintAssignable, Category = "Attributes")
+	FOnKilled OnKilled;
+	
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "AI")
 	UPawnSensingComponent* PawnSensingComponent;

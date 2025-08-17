@@ -14,4 +14,18 @@ class ACTIONROGUELIKE_API AFPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 	
+protected:
+	int Credits;
+
+public:
+	AFPlayerState();
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	int GetCredits() const;
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	void AddCredits(int Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	void SpendCredits(int Amount);
 };

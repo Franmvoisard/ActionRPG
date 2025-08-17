@@ -3,3 +3,22 @@
 
 #include "FPlayerState.h"
 
+AFPlayerState::AFPlayerState()
+{
+	Credits = 0;
+}
+
+int AFPlayerState::GetCredits() const
+{
+	return Credits;
+}
+
+void AFPlayerState::AddCredits(int Amount)
+{
+	Credits += Amount;
+}
+
+void AFPlayerState::SpendCredits(int Amount)
+{
+	Credits -= Amount;
+}

@@ -69,6 +69,7 @@ void AFAICharacter::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponen
 			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			GetCharacterMovement()->DisableMovement();
 			SetLifeSpan(10.0f);
+			OnKilled.Broadcast(this, InstigatorActor);
 		}
 	}
 }

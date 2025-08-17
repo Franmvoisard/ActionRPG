@@ -5,8 +5,10 @@
 
 #include "EngineUtils.h"
 #include "FCharacter.h"
+#include "FPlayerState.h"
 #include "AI/FAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+#include "Kismet/GameplayStatics.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("ar.SpawnBots"), true, TEXT("Enable or disable bots spawning"), ECVF_Cheat);
 
@@ -44,6 +46,17 @@ void AFGameModeBase::KillAllBots()
 	}
 }
 
+void AFGameModeBase::OnEnemyKilled(AFAICharacter* Victim, AActor* Killer)
+{
+	AFPlayerState* PlayerState = Cast<AFPlayerState>(UGameplayStatics::GetPlayerState(GetWorld(), 0));
+	if (PlayerState)
+	{
+		PlayerState->AddCredits(1);
+	}
+	
+	Victim->OnKilled.RemoveDynamic(this, &AFGameModeBase::OnEnemyKilled);
+}
+
 void AFGameModeBase::OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
 	if (!CVarSpawnBots.GetValueOnGameThread())
@@ -79,7 +92,8 @@ void AFGameModeBase::OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* Qu
 	TArray<FVector> SpawnLocations = QueryInstance->GetResultsAsLocations();
 	if (SpawnLocations.Num() > 0)
 	{
-		GetWorld()->SpawnActor<AActor>(MinionClass, SpawnLocations[0], FRotator::ZeroRotator);
+		AFAICharacter* Enemy = GetWorld()->SpawnActor<AFAICharacter>(MinionClass, SpawnLocations[0], FRotator::ZeroRotator);
+		Enemy->OnKilled.AddDynamic(this, &AFGameModeBase::OnEnemyKilled);
 	}
 }
 

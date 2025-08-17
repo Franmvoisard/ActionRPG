@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AI/FAICharacter.h"
 #include "EnvironmentQuery/EnvQuery.h"
 #include "EnvironmentQuery/EnvQueryInstanceBlueprintWrapper.h"
 #include "GameFramework/GameModeBase.h"
@@ -25,7 +26,7 @@ protected:
 	FTimerHandle TimerHandle_SpawnBots;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
-	TSubclassOf<AActor> MinionClass;
+	TSubclassOf<AFAICharacter> MinionClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category= "AI")
 	float SpawnTimerInterval;
@@ -39,6 +40,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float PlayerRespawnDelay;
 
+	UFUNCTION()
+	void OnEnemyKilled(AFAICharacter* Victim, AActor* Killer);
+	
 	UFUNCTION()
 	void OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 

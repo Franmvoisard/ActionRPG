@@ -3,6 +3,7 @@
 // No rights reserved. Use freely.
 #include "FMagicProjectile.h"
 #include "FAttributeComponent.h"
+#include "FGameplayFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -33,10 +34,9 @@ void AFMagicProjectile::OnActorBeginOverlap_Implementation(UPrimitiveComponent* 
 	
 	if (OtherActor != GetInstigator())
 	{
-		if (UFAttributeComponent* OtherActorAttributeComponent = OtherActor->GetComponentByClass<UFAttributeComponent>())
+		if (UFGameplayFunctionLibrary::ApplyDirectionalDamage(OtherActor, GetInstigator(), ProjectileDamage, Hit))
 		{
-			OtherActorAttributeComponent->ApplyHealthChange(GetInstigator(), -ProjectileDamage);
-			Explode_Implementation();
+			Explode();
 		}
 	}
 }

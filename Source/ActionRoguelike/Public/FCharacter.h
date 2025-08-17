@@ -95,6 +95,8 @@ protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual FVector GetPawnViewLocation() const override;
+	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent* AttributeOwner, float NewHealth, float Delta);
 	virtual void PostInitializeComponents() override;

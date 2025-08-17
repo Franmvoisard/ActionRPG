@@ -67,6 +67,11 @@ void AFCharacter::BeginPlay()
 	}
 }
 
+FVector AFCharacter::GetPawnViewLocation() const
+{
+	return CameraComp->GetComponentLocation();
+}
+
 void AFCharacter::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent* AttributeOwner, float NewHealth, float Delta)
 {
 	if (Delta < 0.0f)

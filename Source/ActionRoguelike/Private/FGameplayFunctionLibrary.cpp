@@ -16,14 +16,14 @@ bool UFGameplayFunctionLibrary::ApplyDamage(AActor* Target, AActor* DamageInstig
 }
 
 bool UFGameplayFunctionLibrary::ApplyDirectionalDamage(AActor* DamageTarget, AActor* DamageInstigator,
-	float DamageAmount, const FHitResult& HitResult)
+	float DamageAmount, const FHitResult& HitResult, float Force = 500000.0f)
 {
 	if (ApplyDamage(DamageTarget, DamageInstigator, DamageAmount))
 	{
 		UPrimitiveComponent* HitComponent = HitResult.GetComponent();
 		if (HitComponent && HitComponent->IsSimulatingPhysics(HitResult.BoneName))
 		{
-			HitComponent->AddImpulseAtLocation(-HitResult.ImpactNormal * 3000000.0f, HitResult.ImpactPoint, HitResult.BoneName);
+			HitComponent->AddImpulseAtLocation(-HitResult.ImpactNormal * Force, HitResult.ImpactPoint, HitResult.BoneName);
 		}
 		return true;
 	}

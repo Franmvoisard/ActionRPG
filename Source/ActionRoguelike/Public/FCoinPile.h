@@ -4,15 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "FCooldownInteractable.h"
-#include "FHealthPotion.generated.h"
+#include "FCoinPile.generated.h"
 
 UCLASS()
-class ACTIONROGUELIKE_API AFHealthPotion : public AFCooldownInteractable
+class ACTIONROGUELIKE_API AFCoinPile : public AFCooldownInteractable
 {
 	GENERATED_BODY()
-	AFHealthPotion();
-	
+
+public:
+	// Sets default values for this actor's properties
+	AFCoinPile();
+
 protected:
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
-	bool HealInstigator(APawn* InstigatorToHeal);
 };
+	

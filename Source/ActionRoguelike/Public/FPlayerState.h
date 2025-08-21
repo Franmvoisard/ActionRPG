@@ -31,5 +31,5 @@ public:
 	void AddCredits(int Amount);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
-	void SpendCredits(int Amount);
+	bool SpendCredits(int Amount);
 };

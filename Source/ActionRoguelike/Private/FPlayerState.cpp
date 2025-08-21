@@ -21,8 +21,14 @@ void AFPlayerState::AddCredits(int Amount)
 	OnCreditsChanged.Broadcast(Credits, Amount);
 }
 
-void AFPlayerState::SpendCredits(int Amount)
+bool AFPlayerState::SpendCredits(int Amount)
 {
+	if (Credits < Amount)
+	{
+		return false;
+	}
+	
 	Credits -= Amount;
 	OnCreditsChanged.Broadcast(Credits, -Amount);
+	return true;
 }

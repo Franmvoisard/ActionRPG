@@ -12,6 +12,7 @@
 UCLASS()
 class ACTIONROGUELIKE_API AFPlayerState : public APlayerState
 {
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCreditsChanged, int, NewCredits, int, Amount);
 	GENERATED_BODY()
 	
 protected:
@@ -20,6 +21,9 @@ protected:
 public:
 	AFPlayerState();
 
+	UPROPERTY(BlueprintAssignable, Category = "PlayerState")
+	FOnCreditsChanged OnCreditsChanged;
+	
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
 	int GetCredits() const;
 

@@ -1,4 +1,6 @@
-// Public Domain - 2025 Franco Voisard. This code is provided for skill and knowledge demo purposes. No rights reserved. Use freely.
+// Public Domain - 2025 Franco Voisard.
+// This code is provided for skill and knowledge demo purposes.
+// No rights reserved. Use freely.
 
 
 #include "FPlayerState.h"
@@ -16,9 +18,11 @@ int AFPlayerState::GetCredits() const
 void AFPlayerState::AddCredits(int Amount)
 {
 	Credits += Amount;
+	OnCreditsChanged.Broadcast(Credits, Amount);
 }
 
 void AFPlayerState::SpendCredits(int Amount)
 {
 	Credits -= Amount;
+	OnCreditsChanged.Broadcast(Credits, -Amount);
 }

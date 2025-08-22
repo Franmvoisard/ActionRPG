@@ -21,6 +21,9 @@ public:
 	AFGameModeBase();
 	virtual void StartPlay() override;
 	virtual void OnActorKilled(AActor* Victim, AActor* Killer);
+
+	UPROPERTY(BlueprintReadOnly, Category = "AI")
+	TArray<FVector> InteractablesLocation;
 	
 protected:
 	FTimerHandle TimerHandle_SpawnBots;
@@ -28,24 +31,33 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	TSubclassOf<AFAICharacter> MinionClass;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+	TArray<TSubclassOf<AActor>> InteractablesClasses;
+	
 	UPROPERTY(EditDefaultsOnly, Category= "AI")
 	float SpawnTimerInterval;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UEnvQuery* SpawnBotQuery;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Coins")
+	UEnvQuery* SpawnInteractablesQuery;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UCurveFloat* DifficultyCurve;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float PlayerRespawnDelay;
-
+	
 	UFUNCTION()
 	void OnEnemyKilled(AFAICharacter* Victim, AActor* Killer);
 	
 	UFUNCTION()
-	void OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+	void OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
+	UFUNCTION()
+	void OnSpawnInteractablesQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+	
 	UFUNCTION()
 	void SpawnBotTimer_Elapsed();
 
@@ -54,4 +66,7 @@ protected:
 
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
+
+private:
+	void SpawnInteractables();
 };

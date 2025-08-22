@@ -1,10 +1,13 @@
-// Public Domain - 2025 Franco Voisard. This code is provided for skill and knowledge demo purposes. No rights reserved. Use freely.
+// Public Domain - 2025 Franco Voisard.
+// This code is provided for skill and knowledge demo purposes.
+// No rights reserved. Use freely.
 
 
 #include "FGameModeBase.h"
 
 #include "EngineUtils.h"
 #include "FCharacter.h"
+#include "FCoinPile.h"
 #include "FPlayerState.h"
 #include "AI/FAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
@@ -15,20 +18,28 @@ static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("ar.SpawnBots"), true, TEXT
 
 AFGameModeBase::AFGameModeBase()
 {
+	InteractablesLocation = TArray<FVector>();
 	SpawnTimerInterval = 2.0f;
-	PlayerRespawnDelay= 2.2f;
+	PlayerRespawnDelay = 2.2f;
 }
 
 void AFGameModeBase::StartPlay()
 {
 	Super::StartPlay();
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &AFGameModeBase::SpawnBotTimer_Elapsed, SpawnTimerInterval, true);
+	SpawnInteractables();
 }
 
 void AFGameModeBase::SpawnBotTimer_Elapsed()
 {
 	UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery(this, SpawnBotQuery, this, EEnvQueryRunMode::RandomBest5Pct, nullptr);
-	QueryInstance->GetOnQueryFinishedEvent().AddDynamic(this, &AFGameModeBase::OnSpawnQueryCompleted);
+	QueryInstance->GetOnQueryFinishedEvent().AddDynamic(this, &AFGameModeBase::OnSpawnBotQueryCompleted);
+}
+
+void AFGameModeBase::SpawnInteractables()
+{
+	UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery(this, SpawnInteractablesQuery, this, EEnvQueryRunMode::RandomBest25Pct, nullptr);
+	QueryInstance->GetOnQueryFinishedEvent().AddDynamic(this, &AFGameModeBase::OnSpawnInteractablesQueryCompleted);
 }
 
 void AFGameModeBase::KillAllBots()
@@ -57,7 +68,7 @@ void AFGameModeBase::OnEnemyKilled(AFAICharacter* Victim, AActor* Killer)
 	Victim->OnKilled.RemoveDynamic(this, &AFGameModeBase::OnEnemyKilled);
 }
 
-void AFGameModeBase::OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
+void AFGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
 	if (!CVarSpawnBots.GetValueOnGameThread())
 	{
@@ -95,6 +106,36 @@ void AFGameModeBase::OnSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* Qu
 		AFAICharacter* Enemy = GetWorld()->SpawnActor<AFAICharacter>(MinionClass, SpawnLocations[0], FRotator::ZeroRotator);
 		Enemy->OnKilled.AddDynamic(this, &AFGameModeBase::OnEnemyKilled);
 	}
+}
+
+void AFGameModeBase::OnSpawnInteractablesQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
+{
+	if (QueryStatus != EEnvQueryStatus::Success)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Interactables EQS Failed!"));
+		return;
+	}
+	TArray<FVector> SpawnLocations = QueryInstance->GetResultsAsLocations();
+	if (SpawnLocations.Num() > 0)
+	{
+		for (size_t i = 0; i < SpawnLocations.Num(); i++)
+		{
+			int RandomIndex = FMath::RandRange(0, InteractablesClasses.Num() - 1);
+			AFCooldownInteractable* SpawnedObject = GetWorld()->SpawnActor<AFCooldownInteractable>(InteractablesClasses[RandomIndex], SpawnLocations[i], FRotator::ZeroRotator);
+			InteractablesLocation.Add(SpawnedObject->GetActorLocation());
+			if (InteractablesLocation.Num() == 10) break;
+		}
+
+		if (InteractablesLocation.Num() < 10)
+		{
+			SpawnInteractables();
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No spawn locations found for coin EQS!"));
+	}
+	
 }
 
 void AFGameModeBase::OnActorKilled(AActor* Victim, AActor* Killer)

@@ -14,7 +14,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-static FAutoConsoleVariable CVarDebugDrawEnabled(TEXT("ar.Projectiles.DebugDrawEnabled"), false, TEXT("Enable debug draw for projectiles"), ECVF_Cheat); 
 AFCharacter::AFCharacter() {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -30,9 +29,7 @@ AFCharacter::AFCharacter() {
 	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
 	ActionComponent = CreateDefaultSubobject<UFActionComponent>("Action Component");
 	FlashOnHitComponent = CreateDefaultSubobject<UFFlashOnHitComponent>("Flash On Hit Component");
-	ProjectileTraceSphereRadius = 20.0f;
-	ProjectileMaxTraceDistance = 5000;
-	HandSocketName = "Muzzle_01";
+	
 }
 
 // Called when the game starts or when spawned
@@ -125,19 +122,18 @@ void AFCharacter::LookRotation(const FInputActionValue& InputActionValue)
 
 void AFCharacter::PrimaryAttack()
 {
-	PlayAnimMontage(AttackAnimation);
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &AFCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+	if (!ActionComponent->StartActionByName(this,"MagicProjectile"))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Sprint action not found"));
+	}
 }
 
 void AFCharacter::Dash()
 {
-	GetWorldTimerManager().SetTimer(TimerHandle_Dash, this, &AFCharacter::Dash_TimeElapsed, 0.2f);
-	PlayAnimMontage(AttackAnimation);
-}
-
-void AFCharacter::Dash_TimeElapsed()
-{
-	SpawnProjectile(DashProjectileClass);
+	if (!ActionComponent->StartActionByName(this,"TeleportDash"))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Sprint action not found"));
+	}
 }
 
 void AFCharacter::Sprint_Start()
@@ -156,50 +152,11 @@ void AFCharacter::Sprint_Stop()
 	}
 }
 
-void AFCharacter::PrimaryAttack_TimeElapsed()
-{
-	SpawnProjectile(ProjectileClass);
-}
 
 void AFCharacter::AOEAttack()
 {
-	SpawnProjectile(AOEProjectileClass);
-}
-
-void AFCharacter::SpawnProjectile(TSubclassOf<AFProjectileBase> ProjectileClassToSpawn)
-{
-	if (ensureAlways(ProjectileClassToSpawn))
+	if (!ActionComponent->StartActionByName(this,"BlackHole"))
 	{
-		const FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AbilitySpawnParticle, HandLocation, FQuat::Identity.Rotator());
-
-		FActorSpawnParameters SpawnParameters;
-		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnParameters.Instigator = this;
-
-		FCollisionShape CollisionShape;
-		CollisionShape.SetSphere(ProjectileTraceSphereRadius);
-
-		FCollisionQueryParams CollisionParams;
-		CollisionParams.AddIgnoredActor(this);
-
-		FCollisionObjectQueryParams ObjectQueryParams;
-		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-		ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
-		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-
-		FHitResult HitResult;
-		
-		FVector TraceStart = CameraComp->GetComponentLocation();
-		if (CVarDebugDrawEnabled->GetBool())
-		{
-			DrawDebugSphere(GetWorld(), TraceStart, ProjectileTraceSphereRadius, 12, FColor::Red, false, 2.0f);
-		}
-		FVector TraceEnd = TraceStart + CameraComp->GetForwardVector() * ProjectileMaxTraceDistance;
-		GetWorld()->SweepSingleByObjectType(HitResult, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, CollisionShape, CollisionParams);
-		FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
-		FRotator SpawnRotation = (Target - HandLocation).Rotation();
-		FTransform SpawnTransform = FTransform(SpawnRotation, HandLocation);
-		GetWorld()->SpawnActor<AActor>(ProjectileClassToSpawn, SpawnTransform, SpawnParameters);		
+		UE_LOG(LogTemp, Warning, TEXT("Sprint action not found"));
 	}
 }

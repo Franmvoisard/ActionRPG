@@ -31,14 +31,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
 
-	FTimerHandle TimerHandle_PrimaryAttack;
-	FTimerHandle TimerHandle_Dash;
-	
 	UPROPERTY(EditAnywhere, Category = Input)
 	const UInputAction* AOEAttackAction;
-
-	UPROPERTY(EditAnywhere, Category = Attack);
-	UAnimMontage* AttackAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input);
 	const UInputMappingContext* InputMappingContext;
@@ -71,9 +65,6 @@ protected:
 	const UInputAction* SprintAction;
 	
 	UPROPERTY(EditAnywhere, Category = Abilities)
-	TSubclassOf<AFProjectileBase> ProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = Abilities)
 	TSubclassOf<AFProjectileBase> AOEProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = Abilities)
@@ -87,19 +78,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = VFX)
 	UFFlashOnHitComponent* FlashOnHitComponent;
-
-	UPROPERTY(EditDefaultsOnly, Category = VFX)
-	UParticleSystem* AbilitySpawnParticle;
-
-	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-	float ProjectileTraceSphereRadius;
 	
-	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-	int ProjectileMaxTraceDistance;
-
-	UPROPERTY(VisibleAnywhere, Category = Projectile)
-	FName HandSocketName;
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual FVector GetPawnViewLocation() const override;
@@ -111,11 +90,8 @@ protected:
 	void MoveLateral(const FInputActionValue& InputActionValue);
 	void LookRotation(const FInputActionValue& InputActionValue);
 	void PrimaryAttack();
-	void PrimaryAttack_TimeElapsed();
 	void AOEAttack();
-	void SpawnProjectile(TSubclassOf<AFProjectileBase> ProjectileClass);
 	void Dash();
-	void Dash_TimeElapsed();
 	void Sprint_Start();
 	void Sprint_Stop();
 

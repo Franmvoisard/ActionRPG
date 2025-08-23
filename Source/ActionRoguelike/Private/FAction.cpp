@@ -7,6 +7,15 @@ UFAction::UFAction()
 {
 }
 
+UWorld* UFAction::GetWorld() const
+{
+	if (UActorComponent* ActorComponent = Cast<UActorComponent> (GetOuter()))
+	{
+		return ActorComponent->GetWorld();
+	}
+	return nullptr;
+}
+
 void UFAction::StartAction_Implementation(AActor* Instigator)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Running Action: %s"), *GetNameSafe(this));

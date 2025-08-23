@@ -6,6 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "FActionComponent.h"
 #include "FAttributeComponent.h"
 #include "FInteractionComponent.h"
 #include "FProjectileBase.h"
@@ -27,6 +28,7 @@ AFCharacter::AFCharacter() {
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
+	ActionComponent = CreateDefaultSubobject<UFActionComponent>("Action Component");
 	FlashOnHitComponent = CreateDefaultSubobject<UFFlashOnHitComponent>("Flash On Hit Component");
 	ProjectileTraceSphereRadius = 20.0f;
 	ProjectileMaxTraceDistance = 5000;
@@ -47,6 +49,8 @@ void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AFCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AFCharacter::StopJumping);
 		EnhancedInputComponent->BindAction(PrimaryInteractAction, ETriggerEvent::Started, InteractionComponent, &UFInteractionComponent::PrimaryInteract);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AFCharacter::Sprint_Start);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AFCharacter::Sprint_Stop);
 	}
 }
 
@@ -134,6 +138,22 @@ void AFCharacter::Dash()
 void AFCharacter::Dash_TimeElapsed()
 {
 	SpawnProjectile(DashProjectileClass);
+}
+
+void AFCharacter::Sprint_Start()
+{
+	if (!ActionComponent->StartActionByName(this,"Sprint"))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Sprint action not found"));
+	}
+}
+
+void AFCharacter::Sprint_Stop()
+{
+	if (!ActionComponent->StopActionByName(this,"Sprint"))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Sprint action not found"));
+	}
 }
 
 void AFCharacter::PrimaryAttack_TimeElapsed()

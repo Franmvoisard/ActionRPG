@@ -33,7 +33,7 @@ bool UFActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 {
 	for (UFAction* Action : Actions)
 	{
-		if (Action->GetName() == ActionName)
+		if (Action && Action->ActionName == ActionName)
 		{
 			Action->StartAction(Instigator);
 			return true;
@@ -46,7 +46,7 @@ bool UFActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 {
 	for (UFAction* Action : Actions)
 	{
-		if (Action->GetName() == ActionName)
+		if (Action && Action->ActionName == ActionName)
 		{
 			Action->StopAction(Instigator);
 			return true;

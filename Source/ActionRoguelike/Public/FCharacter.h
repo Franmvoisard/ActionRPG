@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "FCharacter.generated.h"
 
+class UFActionComponent;
 class UFFlashOnHitComponent;
 class UFAttributeComponent;
 class AFTeleportProjectile;
@@ -66,6 +67,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	const UInputAction* DashAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	const UInputAction* SprintAction;
+	
 	UPROPERTY(EditAnywhere, Category = Abilities)
 	TSubclassOf<AFProjectileBase> ProjectileClass;
 
@@ -75,8 +79,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Abilities)
 	TSubclassOf<AFProjectileBase> DashProjectileClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Abilities)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Components)
 	UFAttributeComponent* AttributeComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components)
+	UFActionComponent* ActionComponent;
 	
 	UPROPERTY(EditDefaultsOnly, Category = VFX)
 	UFFlashOnHitComponent* FlashOnHitComponent;
@@ -109,6 +116,8 @@ protected:
 	void SpawnProjectile(TSubclassOf<AFProjectileBase> ProjectileClass);
 	void Dash();
 	void Dash_TimeElapsed();
+	void Sprint_Start();
+	void Sprint_Stop();
 
 public:
 	AFCharacter();

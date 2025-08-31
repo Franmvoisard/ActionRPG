@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FActionComponent.h"
+#include "GameplayTagContainer.h"
 #include "FAction.generated.h"
 
 /**
@@ -13,9 +15,19 @@ class ACTIONROGUELIKE_API UFAction : public UObject
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Tags")
+	FGameplayTagContainer GrantsTags;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Tags")
+	FGameplayTagContainer BlockedTags;
+
+	UFUNCTION(BlueprintCallable, Category = "Action")
+	UFActionComponent* GetOwningComponent() const;
+
 public:
 	UFAction();
-	
+
 	UPROPERTY(EditAnywhere, Category = "Action")
 	FName ActionName;
 

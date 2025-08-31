@@ -7,6 +7,21 @@ UFAction::UFAction()
 {
 }
 
+void UFAction::StartAction_Implementation(AActor* Instigator)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Running Action: %s"), *GetNameSafe(this));
+	UFActionComponent* ActionComponent = GetOwningComponent();
+	ActionComponent->ActiveGameplayTags.AppendTags(GrantsTags);
+	
+}
+
+void UFAction::StopAction_Implementation(AActor* Instigator)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Stopped Action: %s"), *GetNameSafe(this));
+	UFActionComponent* ActionComponent = GetOwningComponent();
+	ActionComponent->ActiveGameplayTags.RemoveTags(GrantsTags);
+}
+
 UWorld* UFAction::GetWorld() const
 {
 	if (UActorComponent* ActorComponent = Cast<UActorComponent> (GetOuter()))
@@ -16,12 +31,7 @@ UWorld* UFAction::GetWorld() const
 	return nullptr;
 }
 
-void UFAction::StartAction_Implementation(AActor* Instigator)
+UFActionComponent* UFAction::GetOwningComponent() const
 {
-	UE_LOG(LogTemp, Warning, TEXT("Running Action: %s"), *GetNameSafe(this));
-}
-
-void UFAction::StopAction_Implementation(AActor* Instigator)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Stopped Action: %s"), *GetNameSafe(this));
+	return Cast<UFActionComponent>(GetOuter());
 }

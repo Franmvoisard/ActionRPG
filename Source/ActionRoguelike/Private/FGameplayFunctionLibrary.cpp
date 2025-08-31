@@ -23,7 +23,9 @@ bool UFGameplayFunctionLibrary::ApplyDirectionalDamage(AActor* DamageTarget, AAc
 		UPrimitiveComponent* HitComponent = HitResult.GetComponent();
 		if (HitComponent && HitComponent->IsSimulatingPhysics(HitResult.BoneName))
 		{
-			HitComponent->AddImpulseAtLocation(-HitResult.ImpactNormal * Force, HitResult.ImpactPoint, HitResult.BoneName);
+			FVector Direction = HitResult.TraceEnd - HitResult.TraceStart;
+			Direction.Normalize();
+			HitComponent->AddImpulseAtLocation(Direction * Force, HitResult.ImpactPoint, HitResult.BoneName);
 		}
 		return true;
 	}

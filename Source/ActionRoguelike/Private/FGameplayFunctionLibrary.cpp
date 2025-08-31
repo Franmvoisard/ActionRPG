@@ -16,7 +16,7 @@ bool UFGameplayFunctionLibrary::ApplyDamage(AActor* Target, AActor* DamageInstig
 }
 
 bool UFGameplayFunctionLibrary::ApplyDirectionalDamage(AActor* DamageTarget, AActor* DamageInstigator,
-	float DamageAmount, const FHitResult& HitResult, float Force = 500000.0f)
+	float DamageAmount, const FHitResult& HitResult, float Force)
 {
 	if (ApplyDamage(DamageTarget, DamageInstigator, DamageAmount))
 	{

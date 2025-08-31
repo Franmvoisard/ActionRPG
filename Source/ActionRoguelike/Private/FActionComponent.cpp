@@ -55,3 +55,12 @@ bool UFActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	return false;
 }
 
+void UFActionComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	for (TSubclassOf<UFAction> ActionClass : DefaultActions)
+	{
+		AddAction(ActionClass);
+	}
+}
+

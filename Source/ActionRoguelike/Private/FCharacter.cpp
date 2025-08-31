@@ -9,10 +9,8 @@
 #include "FActionComponent.h"
 #include "FAttributeComponent.h"
 #include "FInteractionComponent.h"
-#include "FProjectileBase.h"
 #include "FFlashOnHitComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 AFCharacter::AFCharacter() {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.

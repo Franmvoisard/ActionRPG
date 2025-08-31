@@ -35,6 +35,12 @@ bool UFActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 	{
 		if (Action && Action->ActionName == ActionName)
 		{
+			if (!Action->CanStart(Instigator))
+			{
+				FString ErrorMessage = FString::Printf(TEXT("Action %s cannot be started"), *Action->GetName());
+				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, ErrorMessage);
+				continue;
+			}
 			Action->StartAction(Instigator);
 			return true;
 		}
@@ -48,8 +54,11 @@ bool UFActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	{
 		if (Action && Action->ActionName == ActionName)
 		{
-			Action->StopAction(Instigator);
-			return true;
+			if (Action->IsRunning())
+			{
+				Action->StopAction(Instigator);
+				return true;
+			}
 		}
 	}
 	return false;

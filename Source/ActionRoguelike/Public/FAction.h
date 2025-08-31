@@ -24,6 +24,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	UFActionComponent* GetOwningComponent() const;
+	bool bIsRunning = false;
 
 public:
 	UFAction();
@@ -32,10 +33,15 @@ public:
 	FName ActionName;
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")
+	bool CanStart(AActor* Instigator);
+	
+	UFUNCTION(BlueprintNativeEvent, Category = "Action")
 	void StartAction(AActor* Instigator);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")
 	void StopAction(AActor* Instigator);
 
+	UFUNCTION(BlueprintCallable, Category = "Action")
+	bool IsRunning() const;
 	UWorld* GetWorld() const override;
 };

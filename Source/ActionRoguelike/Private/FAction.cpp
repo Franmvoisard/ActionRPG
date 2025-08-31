@@ -7,19 +7,38 @@ UFAction::UFAction()
 {
 }
 
+bool UFAction::CanStart_Implementation(AActor* Instigator)
+{
+	if (IsRunning()) return false;
+	
+	UFActionComponent* ActionComponent = GetOwningComponent();
+	if (ActionComponent->ActiveGameplayTags.HasAny(BlockedTags))
+	{
+		return false;
+	}
+	return true;
+}
+
 void UFAction::StartAction_Implementation(AActor* Instigator)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Running Action: %s"), *GetNameSafe(this));
+	bIsRunning = true;
 	UFActionComponent* ActionComponent = GetOwningComponent();
 	ActionComponent->ActiveGameplayTags.AppendTags(GrantsTags);
-	
 }
 
 void UFAction::StopAction_Implementation(AActor* Instigator)
 {
+	ensureAlways(bIsRunning);
 	UE_LOG(LogTemp, Warning, TEXT("Stopped Action: %s"), *GetNameSafe(this));
+	bIsRunning = false;
 	UFActionComponent* ActionComponent = GetOwningComponent();
 	ActionComponent->ActiveGameplayTags.RemoveTags(GrantsTags);
+}
+
+bool UFAction::IsRunning() const
+{
+	return bIsRunning;
 }
 
 UWorld* UFAction::GetWorld() const

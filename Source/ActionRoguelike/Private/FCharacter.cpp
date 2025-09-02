@@ -46,6 +46,7 @@ void AFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(PrimaryInteractAction, ETriggerEvent::Started, InteractionComponent, &UFInteractionComponent::PrimaryInteract);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AFCharacter::Sprint_Start);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AFCharacter::Sprint_Stop);
+		EnhancedInputComponent->BindAction(ParryAction, ETriggerEvent::Started, this, &AFCharacter::Parry);
 	}
 }
 
@@ -147,6 +148,14 @@ void AFCharacter::Sprint_Stop()
 	if (!ActionComponent->StopActionByName(this,"Sprint"))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Sprint action not found"));
+	}
+}
+
+void AFCharacter::Parry()
+{
+	if (!ActionComponent->StartActionByName(this,"Parry"))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Parry action not found"));
 	}
 }
 

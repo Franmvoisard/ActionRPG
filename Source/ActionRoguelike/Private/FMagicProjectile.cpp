@@ -2,9 +2,12 @@
 // This code is provided for educational purposes.
 // No rights reserved. Use freely.
 #include "FMagicProjectile.h"
+
+#include "FActionComponent.h"
 #include "FAttributeComponent.h"
 #include "FGameplayFunctionLibrary.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 AFMagicProjectile::AFMagicProjectile()
@@ -32,8 +35,18 @@ void AFMagicProjectile::OnActorBeginOverlap_Implementation(UPrimitiveComponent* 
 {
 	UE_LOG(LogTemp, Log, TEXT("Overlapped"));
 	
-	if (OtherActor != GetInstigator())
+	if (OtherActor && OtherActor != GetInstigator())
 	{
+		UFActionComponent* ActionComponent = OtherActor->GetComponentByClass<UFActionComponent>();
+		
+		if (ActionComponent && ActionComponent->ActiveGameplayTags.HasTag(ParryTag) && !bHasAlreadyReflected)
+		{
+			ProjectileMovement->Velocity = -ProjectileMovement->Velocity;
+			SetInstigator(Cast<APawn>(OtherActor));
+			bHasAlreadyReflected = true;
+			return;
+		}
+		
 		if (UFGameplayFunctionLibrary::ApplyDirectionalDamage(OtherActor, GetInstigator(), ProjectileDamage, Hit))
 		{
 			Explode();

@@ -63,6 +63,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	const UInputAction* SprintAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	const UInputAction* ParryAction;
 	
 	UPROPERTY(EditAnywhere, Category = Abilities)
 	TSubclassOf<AFProjectileBase> AOEProjectileClass;
@@ -94,6 +97,7 @@ protected:
 	void Dash();
 	void Sprint_Start();
 	void Sprint_Stop();
+	void Parry();
 
 public:
 	AFCharacter();

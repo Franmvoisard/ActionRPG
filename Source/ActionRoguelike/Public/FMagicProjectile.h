@@ -5,7 +5,10 @@
 
 #include "CoreMinimal.h"
 #include "FProjectileBase.h"
+#include "GameplayTagContainer.h"
 #include "FMagicProjectile.generated.h"
+
+struct FGameplayTagContainer;
 
 UCLASS()
 class ACTIONROGUELIKE_API AFMagicProjectile : public AFProjectileBase
@@ -32,4 +35,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Attributes)
 	float ProjectileDamage;
+
+	UPROPERTY(EditDefaultsOnly, Category= Damage)
+	FGameplayTag ParryTag;
+
+	bool bHasAlreadyReflected = false;
 };

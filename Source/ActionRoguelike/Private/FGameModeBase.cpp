@@ -11,16 +11,15 @@
 #include "FPlayerState.h"
 #include "AI/FAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
-#include "Kismet/GameplayStatics.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("ar.SpawnBots"), true, TEXT("Enable or disable bots spawning"), ECVF_Cheat);
-
 
 AFGameModeBase::AFGameModeBase()
 {
 	InteractablesLocation = TArray<FVector>();
 	SpawnTimerInterval = 2.0f;
 	PlayerRespawnDelay = 2.2f;
+	CreditsPerKill = 1;
 }
 
 void AFGameModeBase::StartPlay()
@@ -55,17 +54,6 @@ void AFGameModeBase::KillAllBots()
 			}	
 		}
 	}
-}
-
-void AFGameModeBase::OnEnemyKilled(AFAICharacter* Victim, AActor* Killer)
-{
-	AFPlayerState* PlayerState = Cast<AFPlayerState>(UGameplayStatics::GetPlayerState(GetWorld(), 0));
-	if (PlayerState)
-	{
-		PlayerState->AddCredits(1);
-	}
-	
-	Victim->OnKilled.RemoveDynamic(this, &AFGameModeBase::OnEnemyKilled);
 }
 
 void AFGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
@@ -103,8 +91,7 @@ void AFGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper*
 	TArray<FVector> SpawnLocations = QueryInstance->GetResultsAsLocations();
 	if (SpawnLocations.Num() > 0)
 	{
-		AFAICharacter* Enemy = GetWorld()->SpawnActor<AFAICharacter>(MinionClass, SpawnLocations[0], FRotator::ZeroRotator);
-		Enemy->OnKilled.AddDynamic(this, &AFGameModeBase::OnEnemyKilled);
+		GetWorld()->SpawnActor<AFAICharacter>(MinionClass, SpawnLocations[0], FRotator::ZeroRotator);
 	}
 }
 
@@ -148,7 +135,15 @@ void AFGameModeBase::OnActorKilled(AActor* Victim, AActor* Killer)
 		Delegate_RespawnDelay.BindUObject(this, &AFGameModeBase::RespawnPlayerElapsed, Player->GetController());
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate_RespawnDelay, PlayerRespawnDelay, false);
 	}
-
+	APawn* KillerPawn = Cast<APawn>(Killer);
+	if (KillerPawn)
+	{
+		AFPlayerState* PlayerState = KillerPawn->GetPlayerState<AFPlayerState>();
+		if (PlayerState)
+		{
+			PlayerState->AddCredits(CreditsPerKill);
+		}
+	}
 	UE_LOG(LogTemp, Warning, TEXT("Player %s killed by %s"), *GetNameSafe(Victim), *GetNameSafe(Killer));
 }
 

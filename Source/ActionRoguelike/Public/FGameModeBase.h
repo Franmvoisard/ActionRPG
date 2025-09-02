@@ -24,8 +24,11 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "AI")
 	TArray<FVector> InteractablesLocation;
-	
+
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+	int CreditsPerKill;
+	
 	FTimerHandle TimerHandle_SpawnBots;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
@@ -48,9 +51,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float PlayerRespawnDelay;
-	
-	UFUNCTION()
-	void OnEnemyKilled(AFAICharacter* Victim, AActor* Killer);
 	
 	UFUNCTION()
 	void OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);

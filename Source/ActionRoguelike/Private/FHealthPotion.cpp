@@ -2,11 +2,8 @@
 
 
 #include "FHealthPotion.h"
-
 #include "FAttributeComponent.h"
 #include "FPlayerState.h"
-#include "Kismet/GameplayStatics.h"
-
 
 class UFAttributeComponent;
 
@@ -14,21 +11,23 @@ AFHealthPotion::AFHealthPotion() { }
 
 void AFHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
-	ensure(IsValid(InstigatorPawn));
+	if (!ensure(InstigatorPawn))
+	{
+		return;
+	}
+	
 	if (IsInteractable)
 	{
-		AFPlayerState* PlayerState = Cast<AFPlayerState>(UGameplayStatics::GetPlayerState(GetWorld(), 0));
 		if (UFAttributeComponent* InstigatorAttributeComponent = UFAttributeComponent::GetAttributes(InstigatorPawn))
 		{
 			if (InstigatorAttributeComponent->IsFullHealth()) return;
-			if (PlayerState)
+
+			AFPlayerState* PlayerState = InstigatorPawn->GetPlayerState<AFPlayerState>();
+			if (PlayerState && PlayerState->SpendCredits(5))
 			{
-				if (PlayerState->SpendCredits(5))
-				{
-					HealInstigator(InstigatorPawn);
-					GetWorldTimerManager().SetTimer(Timer_ResetInteraction, this, &AFHealthPotion::ResetInteractionTimer_Elapsed,Cooldown);
-					SetInteractionState(false);
-				}
+				HealInstigator(InstigatorPawn);
+				GetWorldTimerManager().SetTimer(Timer_ResetInteraction, this, &AFHealthPotion::ResetInteractionTimer_Elapsed,Cooldown);
+				SetInteractionState(false);
 			}
 		}
 	}	

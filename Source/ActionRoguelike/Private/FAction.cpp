@@ -2,6 +2,7 @@
 
 
 #include "FAction.h"
+#include "FActionComponent.h"
 
 UFAction::UFAction()
 {

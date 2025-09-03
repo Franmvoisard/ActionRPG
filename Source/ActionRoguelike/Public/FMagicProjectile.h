@@ -8,6 +8,7 @@
 #include "GameplayTagContainer.h"
 #include "FMagicProjectile.generated.h"
 
+class UFActionEffect;
 struct FGameplayTagContainer;
 
 UCLASS()
@@ -36,6 +37,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Attributes)
 	float ProjectileDamage;
 
+	UPROPERTY(EditDefaultsOnly, Category = Damage)
+	TSubclassOf<UFActionEffect> BurningActionClass;
+	
 	UPROPERTY(EditDefaultsOnly, Category= Damage)
 	FGameplayTag ParryTag;
 

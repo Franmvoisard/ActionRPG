@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FActionComponent.h"
 #include "GameplayTagContainer.h"
 #include "FAction.generated.h"
 
@@ -26,6 +25,7 @@ protected:
 	UFActionComponent* GetOwningComponent() const;
 	bool bIsRunning = false;
 
+
 public:
 	UFAction();
 
@@ -34,6 +34,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")
 	bool CanStart(AActor* Instigator);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	bool bAutoStart;
 	
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")
 	void StartAction(AActor* Instigator);

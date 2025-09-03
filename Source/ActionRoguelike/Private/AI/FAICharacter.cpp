@@ -5,6 +5,7 @@
 
 #include "AIController.h"
 #include "BrainComponent.h"
+#include "FActionComponent.h"
 #include "FAttributeComponent.h"
 #include "FWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -17,9 +18,11 @@ AFAICharacter::AFAICharacter()
 {
  	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
 	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
+	ActionComponent = CreateDefaultSubobject<UFActionComponent>("Action Component");
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
+	
 }
 
 void AFAICharacter::PostInitializeComponents()

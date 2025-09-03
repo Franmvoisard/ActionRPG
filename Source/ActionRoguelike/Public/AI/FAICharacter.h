@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "FAICharacter.generated.h"
 
+class UFActionComponent;
 class UFWorldUserWidget;
 class UPawnSensingComponent;
 
@@ -31,6 +32,9 @@ protected:
 
 	UPROPERTY()
 	UFWorldUserWidget* ActiveHealthBar;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UFActionComponent* ActionComponent;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);

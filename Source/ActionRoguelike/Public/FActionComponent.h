@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FActionEffect.h"
 #include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "FActionComponent.generated.h"
@@ -23,14 +24,17 @@ public:
 	FGameplayTagContainer ActiveGameplayTags;
 
 	UFUNCTION(BlueprintCallable, Category = Action)
-	void AddAction(TSubclassOf<UFAction> ActionClass);
+	void AddAction(AActor* Instigator, TSubclassOf<UFAction> ActionClass);
+
+	UFUNCTION(BlueprintCallable, Category = Action)
+	void RemoveAction(UFActionEffect* ActionToRemove);
 
 	UFUNCTION(BlueprintCallable, Category = Action)
 	bool StartActionByName(AActor* Instigator, FName ActionName);
 
 	UFUNCTION(BlueprintCallable, Category = Action)
 	bool StopActionByName(AActor* Instigator, FName ActionName);
-	
+
 protected:
 	UPROPERTY(EditAnywhere, Category = Actions)
 	TArray<TSubclassOf<UFAction>> DefaultActions;

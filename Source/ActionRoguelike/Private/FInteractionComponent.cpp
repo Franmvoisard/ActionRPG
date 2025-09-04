@@ -11,12 +11,33 @@ UFInteractionComponent::UFInteractionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	MaxInteractionDistance = 400;
+	TraceRadius = 30;
 }
 
 void UFInteractionComponent::PrimaryInteract()
 {
+	if (FocusedActor == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("No interactable found!"));
+	}
+	else
+	{
+		APawn* MyPawn = Cast<APawn>(GetOwner());
+		IFGameplayInterface::Execute_Interact(FocusedActor, MyPawn);
+	}
+}
+
+void UFInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	FindBestInteractable();
+}
+
+void UFInteractionComponent::FindBestInteractable()
+{
+	FocusedActor = nullptr;
 	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	ObjectQueryParams.AddObjectTypesToQuery(TraceCollisionChannel);
 	AActor* Owner = GetOwner();
 
 	FVector EyeLocation;
@@ -25,30 +46,50 @@ void UFInteractionComponent::PrimaryInteract()
 	
 	FVector End = EyeLocation + EyeRotation.Vector() * MaxInteractionDistance;
 	FCollisionShape Shape;
-	float Radius = 30.0f;
-	Shape.SetSphere(Radius);
+	Shape.SetSphere(TraceRadius);
 	TArray<FHitResult> Hits;
 	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
 	 
 	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
-	AActor* InteractableActor = nullptr;
 	for(FHitResult Hit : Hits)
 	{
 		if (AActor* HitActor = Hit.GetActor())
 		{
 			if(HitActor->Implements<UFGameplayInterface>())
 			{
-				InteractableActor = HitActor;
-				APawn* MyPawn = Cast<APawn>(Owner);
-				IFGameplayInterface::Execute_Interact(HitActor, MyPawn);
+				FocusedActor = HitActor;
 				break;
-			}	
+			}
 		}
 	}
-	if (InteractableActor && CVarDebugDrawInteraction.GetValueOnGameThread())
+
+	if (FocusedActor)
 	{
-		DrawDebugSphere(GetWorld(), Hits.Last().ImpactPoint, Radius, 32, LineColor, false, 2.0f);
+		if (DefaultWidgetInstance == nullptr && ensure(DefaultWidgetClass))
+		{
+			DefaultWidgetInstance = CreateWidget<UFWorldUserWidget>(GetWorld(), DefaultWidgetClass);
+		}
+
+		if (DefaultWidgetInstance)
+		{
+			DefaultWidgetInstance->AttachedActor = FocusedActor;
+			if (!DefaultWidgetInstance->IsInViewport())
+			{
+				DefaultWidgetInstance->AddToViewport();
+			}
+		}
+	}
+	else
+	{
+		if (DefaultWidgetInstance)
+		{
+			DefaultWidgetInstance->RemoveFromParent();
+		}
+	}
+	
+	if (FocusedActor && CVarDebugDrawInteraction.GetValueOnGameThread())
+	{
+		DrawDebugSphere(GetWorld(), Hits.Last().ImpactPoint, TraceRadius, 32, LineColor, false, 2.0f);
 		DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f,0, 2.0f);
 	}
 }
-

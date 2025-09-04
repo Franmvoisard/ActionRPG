@@ -4,6 +4,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FWorldUserWidget.h"
 #include "Components/ActorComponent.h"
 #include "FInteractionComponent.generated.h"
 
@@ -19,7 +20,26 @@ public:
 	void PrimaryInteract();
 
 protected:
+	UPROPERTY()
+	AActor* FocusedActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = Interaction)
+	float TraceRadius;
 
 	UPROPERTY(EditDefaultsOnly, Category = Interaction)
 	int MaxInteractionDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category = Interaction)
+	TSubclassOf<UFWorldUserWidget> DefaultWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = Interaction)
+	TEnumAsByte<ECollisionChannel> TraceCollisionChannel;
+	
+	UPROPERTY() 
+	UFWorldUserWidget* DefaultWidgetInstance;
+
+
+	void FindBestInteractable();
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

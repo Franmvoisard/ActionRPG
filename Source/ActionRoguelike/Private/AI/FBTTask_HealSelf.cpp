@@ -1,7 +1,7 @@
 // Public Domain - 2025 Franco Voisard. This code is provided for skill and knowledge demo purposes. No rights reserved. Use freely.
 
 
-#include "FBTTask_HealSelf.h"
+#include "AI/FBTTask_HealSelf.h"
 
 #include "AIController.h"
 #include "FAttributeComponent.h"

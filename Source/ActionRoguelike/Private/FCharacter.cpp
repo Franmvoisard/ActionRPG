@@ -27,7 +27,7 @@ AFCharacter::AFCharacter() {
 	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
 	ActionComponent = CreateDefaultSubobject<UFActionComponent>("Action Component");
 	FlashOnHitComponent = CreateDefaultSubobject<UFFlashOnHitComponent>("Flash On Hit Component");
-	
+	DamageToRageRatio = 1.2f;
 }
 
 // Called when the game starts or when spawned
@@ -84,6 +84,8 @@ void AFCharacter::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent*
 		else
 		{
 			FlashOnHitComponent->OnHit(GetMesh());
+			int RageGenerated = FMath::Max(abs(Delta * DamageToRageRatio),1);
+			AttributeOwner->ApplyRageChange(InstigatorActor, RageGenerated);
 		}
 	}
 }

@@ -81,7 +81,10 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = VFX)
 	UFFlashOnHitComponent* FlashOnHitComponent;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float DamageToRageRatio;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual FVector GetPawnViewLocation() const override;

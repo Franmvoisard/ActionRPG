@@ -7,7 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "FAttributeComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChange, AActor*, InstigatorActor, UFAttributeComponent*, Owner, float, NewHealth, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnAttributeChange, AActor*, InstigatorActor, UFAttributeComponent*, Owner, float, NewValue, float, Delta);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_API UFAttributeComponent : public UActorComponent
 {
@@ -25,23 +25,31 @@ public:
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool ApplyRageChange(AActor* InstigatorActor, float Delta);
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool Kill(AActor* InstigatorActor);
 	
 	UPROPERTY(BlueprintAssignable, Category = "Attributes")
-	FOnHealthChange OnHealthChange;
-	
+	FOnAttributeChange OnHealthChange;
+
+	UPROPERTY(BlueprintAssignable, Category = "Attributes")
+	FOnAttributeChange OnRageChange;
+
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool IsAlive() const;
-	
+
 	UFUNCTION(BlueprintCallable)
 	bool IsFullHealth() const;
-	
+
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHealth() const;
-	
+
 	UFUNCTION(BlueprintCallable)
 	float GetHealth() const;
-	
+
+	UFUNCTION(BlueprintCallable)
+	float GetRage() const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
@@ -49,4 +57,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float MaxHealth;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float Rage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float MaxRage;
 };

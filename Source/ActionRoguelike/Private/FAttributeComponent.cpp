@@ -2,13 +2,14 @@
 // This code is provided for educational purposes.
 // No rights reserved. Use freely.
 #include "FAttributeComponent.h"
-
 #include "FGameModeBase.h"
 
 UFAttributeComponent::UFAttributeComponent()
 {
 	Health = 100.0f;
 	MaxHealth = 100.0f;
+	Rage = 0.0f;
+	MaxRage = 100.0f;
 }
 
 UFAttributeComponent* UFAttributeComponent::GetAttributes(AActor* FromActor)
@@ -49,6 +50,12 @@ float UFAttributeComponent::GetHealth() const
 	return Health;
 }
 
+float UFAttributeComponent::GetRage() const
+{
+	return Rage;
+}
+
+
 bool UFAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 	if (!GetOwner()->CanBeDamaged()) return false;
@@ -67,6 +74,27 @@ bool UFAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 		}
 	}
 	return ActualDelta != 0.0f;
+}
+
+bool UFAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
+{
+	if (Delta == 0.0f) return false;
+	float OldRage = Rage;
+	if (Delta > 0.0f)
+	{
+		if (MaxRage - Rage == 0.0f)
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if (Rage + Delta < 0.0f) return false;
+	}
+	Rage = FMath::Clamp(Rage + Delta, 0.0f, MaxRage);
+	float RealDelta = Rage - OldRage;
+	OnRageChange.Broadcast(InstigatorActor, this, Rage, RealDelta);
+	return true;
 }
 
 bool UFAttributeComponent::Kill(AActor* InstigatorActor)

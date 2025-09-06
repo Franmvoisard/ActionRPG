@@ -36,13 +36,28 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UFActionComponent* ActionComponent;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UFWorldUserWidget> AlertWidget;
+
+	UPROPERTY()
+	UFWorldUserWidget* ActiveAlertWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	float AlertPopupOffset;
+
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, UFAttributeComponent* OwnerAttributeComponent, float NewHealth, float Delta);
 
+	
 	void SetTargetActor(AActor* TargetActor);
+	
 	virtual void PostInitializeComponents() override;
+private:
+	UFUNCTION()
+	void SpawnAlertPopup();
 };
+
 	

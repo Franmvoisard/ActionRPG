@@ -78,8 +78,21 @@ void AFAICharacter::OnHealthChanged(AActor* InstigatorActor, UFAttributeComponen
 
 void AFAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	SetTargetActor(Pawn);	
-	DrawDebugString(GetWorld(),GetActorLocation(), "Player seen", nullptr, FColor::Red, 2.0f);
+	SetTargetActor(Pawn);
+	SpawnAlertPopup();
+	DrawDebugString(GetWorld(), GetActorLocation(), "Player seen", nullptr, FColor::Red, 2.0f);
 }
 
-
+void AFAICharacter::SpawnAlertPopup()
+{
+	if (!ActiveAlertWidget)
+	{
+		if (UFWorldUserWidget* Widget = CreateWidget<UFWorldUserWidget>(GetWorld(), AlertWidget))
+		{
+			Widget->AttachedActor = this;
+			Widget->AddToViewport(10);
+			Widget->SetRenderTranslation(Widget->GetRenderTransformPivot() + FVector2D(0.0f, AlertPopupOffset));
+			ActiveAlertWidget = Widget;
+		}
+	}
+}

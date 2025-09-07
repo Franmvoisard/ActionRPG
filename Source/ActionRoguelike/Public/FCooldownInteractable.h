@@ -15,7 +15,6 @@ class ACTIONROGUELIKE_API AFCooldownInteractable : public AActor, public IFGamep
 {
 	GENERATED_BODY()
 
-	
 public:	
 	AFCooldownInteractable();
 

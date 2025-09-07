@@ -81,6 +81,18 @@ bool UFActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	return false;
 }
 
+UFAction* UFActionComponent::GetAction(TSubclassOf<UFAction> ActionType)
+{
+	for (UFAction* Action : Actions)
+	{
+		if (Action && Action->IsA(ActionType))
+		{
+			return Action;
+		}
+	}
+	return nullptr;
+}
+
 void UFActionComponent::BeginPlay()
 {
 	Super::BeginPlay();

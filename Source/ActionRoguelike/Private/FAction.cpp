@@ -2,6 +2,8 @@
 
 
 #include "FAction.h"
+
+#include "DebugCVar.h"
 #include "FActionComponent.h"
 
 UFAction::UFAction()
@@ -22,7 +24,13 @@ bool UFAction::CanStart_Implementation(AActor* Instigator)
 
 void UFAction::StartAction_Implementation(AActor* Instigator)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Running Action: %s"), *GetNameSafe(this));
+	DEBUG_ONLY
+	(
+		if (DebugCVar::IsActionsDebugEnabled())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Running Action: %s"), *GetNameSafe(this));
+		}
+	)
 	bIsRunning = true;
 	UFActionComponent* ActionComponent = GetOwningComponent();
 	ActionComponent->ActiveGameplayTags.AppendTags(GrantsTags);
@@ -31,7 +39,13 @@ void UFAction::StartAction_Implementation(AActor* Instigator)
 void UFAction::StopAction_Implementation(AActor* Instigator)
 {
 	ensureAlways(bIsRunning);
-	UE_LOG(LogTemp, Warning, TEXT("Stopped Action: %s"), *GetNameSafe(this));
+	DEBUG_ONLY
+	(
+		if (DebugCVar::IsActionsDebugEnabled())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Stopped Action: %s"), *GetNameSafe(this));
+		}
+	)
 	bIsRunning = false;
 	UFActionComponent* ActionComponent = GetOwningComponent();
 	ActionComponent->ActiveGameplayTags.RemoveTags(GrantsTags);

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "FActionEffect.h"
+#include "FAction_Interactable.h"
 #include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "FActionComponent.generated.h"
@@ -34,6 +35,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Action)
 	bool StopActionByName(AActor* Instigator, FName ActionName);
+
+	UFUNCTION(BlueprintCallable, Category = Action)
+	UFAction* GetAction(TSubclassOf<UFAction> ActionType);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = Actions)

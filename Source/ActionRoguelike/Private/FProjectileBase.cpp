@@ -30,6 +30,7 @@ AFProjectileBase::AFProjectileBase()
 	CameraShakeOnImpact = nullptr;
 	ShakeIgnoreAreaRadius = 200.0f;
 	ShakeImpactAreaRadius = 500.0f;
+	bReplicates = true;
 }
 
 void AFProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

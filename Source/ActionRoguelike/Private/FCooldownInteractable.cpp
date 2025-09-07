@@ -14,6 +14,7 @@ AFCooldownInteractable::AFCooldownInteractable()
 	SphereComponent->SetupAttachment(RootComponent);
 	IsInteractable = true;
 	Cooldown = 10.0f;
+	bReplicates = true;
 }
 
 void AFCooldownInteractable::SetInteractionState(bool IsActive)

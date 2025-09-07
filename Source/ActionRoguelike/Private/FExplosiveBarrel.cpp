@@ -9,6 +9,7 @@
 #include "PhysicsEngine/RadialForceComponent.h"
 
 // Sets default values
+
 AFExplosiveBarrel::AFExplosiveBarrel()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -37,13 +38,15 @@ void AFExplosiveBarrel::InitializeRadialForceComponent()
 void AFExplosiveBarrel::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	BarrelStaticMesh->OnComponentHit.AddDynamic(this, &AFExplosiveBarrel::OnBarrelHit);
+	if (HasAuthority())
+	{
+		BarrelStaticMesh->OnComponentHit.AddDynamic(this, &AFExplosiveBarrel::OnBarrelHit);
+	}
 }
 
 void AFExplosiveBarrel::OnBarrelHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+                                                   FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Log, TEXT("Overlapped"));
 	if (OtherActor && OtherActor != this)
 	{
 		if (UFAttributeComponent* AttributeComponent = UFAttributeComponent::GetAttributes(OtherActor))
@@ -55,7 +58,12 @@ void AFExplosiveBarrel::OnBarrelHit(UPrimitiveComponent* HitComponent, AActor* O
 	}
 }
 
-void AFExplosiveBarrel::Explode()
+void AFExplosiveBarrel::Explode_Implementation()
+{
+	Multicast_Explode();
+}
+
+void AFExplosiveBarrel::Multicast_Explode_Implementation()
 {
 	RadialForceComponent->FireImpulse();
 	ParticleComponent->Activate();

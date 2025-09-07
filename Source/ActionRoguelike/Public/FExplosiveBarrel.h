@@ -33,8 +33,12 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystemComponent* ParticleComponent;
-	
+
+	UFUNCTION(BlueprintNativeEvent)
 	void Explode();
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multicast_Explode();
 
 public:
 	AFExplosiveBarrel();

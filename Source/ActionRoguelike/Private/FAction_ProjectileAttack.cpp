@@ -1,13 +1,14 @@
-// Public Domain - 2025 Franco Voisard. This code is provided for skill and knowledge demo purposes. No rights reserved. Use freely.
+// Public Domain - 2025 Franco Voisard.
+// This code is provided for skill and knowledge demo purposes.
+// No rights reserved. Use freely.
 
 
 #include "FAction_ProjectileAttack.h"
 
+#include "DebugCVar.h"
 #include "FCharacter.h"
 #include "FProjectileBase.h"
 #include "Kismet/GameplayStatics.h"
-
-static FAutoConsoleVariable CVarDebugDrawEnabled(TEXT("ar.Projectiles.DebugDrawEnabled"), false, TEXT("Enable debug draw for projectiles"), ECVF_Cheat);
 
 UFAction_ProjectileAttack::UFAction_ProjectileAttack()
 {
@@ -68,10 +69,12 @@ void UFAction_ProjectileAttack::ProjectileAttack_TimeElapsed(ACharacter* Instiga
 		FHitResult HitResult;
 		
 		FVector TraceStart = InstigatorCharacter->GetPawnViewLocation();
-		if (CVarDebugDrawEnabled->GetBool())
-		{
-			DrawDebugSphere(GetWorld(), TraceStart, ProjectileTraceSphereRadius, 12, FColor::Red, false, 2.0f);
-		}
+		DEBUG_ONLY(
+			if (DebugCVar::IsProjectilesDebugEnabled())
+			{
+				DrawDebugSphere(GetWorld(), TraceStart, ProjectileTraceSphereRadius, 12, FColor::Red, false, 2.0f);
+			}
+		)
 		FVector TraceEnd = TraceStart + InstigatorCharacter->GetControlRotation().Vector() * ProjectileMaxTraceDistance;
 		GetWorld()->SweepSingleByObjectType(HitResult, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, CollisionShape, CollisionParams);
 		FVector Target = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;

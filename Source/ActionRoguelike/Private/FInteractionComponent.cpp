@@ -3,9 +3,9 @@
 // No rights reserved. Use freely.
 
 #include "FInteractionComponent.h"
+#include "DebugCVar.h"
 #include "FGameplayInterface.h"
 
-static TAutoConsoleVariable<bool> CVarDebugDrawInteraction(TEXT("ar.DebugInteraction"), false, TEXT("Enable interaction drawing."), ECVF_Cheat);
 // Sets default values for this component's properties
 UFInteractionComponent::UFInteractionComponent()
 {
@@ -18,7 +18,12 @@ void UFInteractionComponent::PrimaryInteract()
 {
 	if (FocusedActor == nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("No interactable found!"));
+		DEBUG_ONLY(
+			if (DebugCVar::IsInteractionDebugEnabled())
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("No interactable found!"));
+			}
+		)
 	}
 	else
 	{
@@ -87,9 +92,14 @@ void UFInteractionComponent::FindBestInteractable()
 		}
 	}
 	
-	if (FocusedActor && CVarDebugDrawInteraction.GetValueOnGameThread())
+	if (FocusedActor)
 	{
-		DrawDebugSphere(GetWorld(), Hits.Last().ImpactPoint, TraceRadius, 32, LineColor, false, 2.0f);
-		DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f,0, 2.0f);
+		DEBUG_ONLY(
+			if (DebugCVar::IsInteractionDebugEnabled())
+			{
+				DrawDebugSphere(GetWorld(), Hits.Last().ImpactPoint, TraceRadius, 32, LineColor, false, 2.0f);
+				DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f,0, 2.0f);
+			}
+		)
 	}
 }

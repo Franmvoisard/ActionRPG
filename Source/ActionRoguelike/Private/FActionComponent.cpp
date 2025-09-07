@@ -1,18 +1,16 @@
-// Public Domain - 2025 Franco Voisard. This code is provided for skill and knowledge demo purposes. No rights reserved. Use freely.
+// Public Domain - 2025 Franco Voisard.
+// This code is provided for skill and knowledge demo purposes.
+// No rights reserved. Use freely.
 
 
 #include "FActionComponent.h"
 
+#include "DebugCVar.h"
 #include "FAction.h"
 
-// Sets default values for this component's properties
 UFActionComponent::UFActionComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 void UFActionComponent::AddAction(AActor* Instigator, TSubclassOf<UFAction> ActionClass)
@@ -51,8 +49,13 @@ bool UFActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 		{
 			if (!Action->CanStart(Instigator))
 			{
-				FString ErrorMessage = FString::Printf(TEXT("Action %s cannot be started"), *Action->GetName());
-				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, ErrorMessage);
+				DEBUG_ONLY(
+					if (DebugCVar::IsActionsDebugEnabled())
+					{
+						FString ErrorMessage = FString::Printf(TEXT("Action %s cannot be started"), *Action->GetName());
+						GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, ErrorMessage);
+					}
+				)
 				continue;
 			}
 			Action->StartAction(Instigator);
@@ -86,12 +89,3 @@ void UFActionComponent::BeginPlay()
 		AddAction(GetOwner(), ActionClass);
 	}
 }
-
-void UFActionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-	FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	FString DebugMessage = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMessage);
-}
-

@@ -5,14 +5,13 @@
 
 #include "FGameModeBase.h"
 
+#include "DebugCVar.h"
 #include "EngineUtils.h"
 #include "FCharacter.h"
 #include "FCoinPile.h"
 #include "FPlayerState.h"
 #include "AI/FAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
-
-static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("ar.SpawnBots"), true, TEXT("Enable or disable bots spawning"), ECVF_Cheat);
 
 AFGameModeBase::AFGameModeBase()
 {
@@ -58,11 +57,14 @@ void AFGameModeBase::KillAllBots()
 
 void AFGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
-	if (!CVarSpawnBots.GetValueOnGameThread())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Bots spawn disabled via cvar 'CVarSpawnBots'"));
-		return;
-	}
+	DEBUG_ONLY (
+		if (!DebugCVar::IsBotSpawningEnabled())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Bots spawn disabled via cvar 'CVarSpawnBots'"));
+			return;
+		}
+	)
+	
 	if (QueryStatus != EEnvQueryStatus::Success)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Spawn bot EQS Failed!"));

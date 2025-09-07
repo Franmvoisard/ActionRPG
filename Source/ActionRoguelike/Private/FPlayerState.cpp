@@ -5,6 +5,13 @@
 
 #include "FPlayerState.h"
 
+#include "Net/UnrealNetwork.h"
+
+void AFPlayerState::OnRep_Credits(int OldCredits)
+{
+	OnCreditsChanged.Broadcast(Credits, OldCredits - Credits);
+}
+
 AFPlayerState::AFPlayerState()
 {
 	Credits = 0;
@@ -31,4 +38,10 @@ bool AFPlayerState::SpendCredits(int Amount)
 	Credits -= Amount;
 	OnCreditsChanged.Broadcast(Credits, -Amount);
 	return true;
+}
+
+void AFPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AFPlayerState, Credits);
 }

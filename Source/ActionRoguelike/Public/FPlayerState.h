@@ -16,20 +16,24 @@ class ACTIONROGUELIKE_API AFPlayerState : public APlayerState
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY(ReplicatedUsing = OnRep_Credits, EditDefaultsOnly, Category = "Credits")
 	int Credits;
 
+	UFUNCTION()
+	void OnRep_Credits(int OldCredits);
+	
 public:
 	AFPlayerState();
 
-	UPROPERTY(BlueprintAssignable, Category = "PlayerState")
+	UPROPERTY(BlueprintAssignable, Category = "Credits")
 	FOnCreditsChanged OnCreditsChanged;
 	
-	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	UFUNCTION(BlueprintCallable, Category = "Credits")
 	int GetCredits() const;
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	UFUNCTION(BlueprintCallable, Category = "Credits")
 	void AddCredits(int Amount);
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	UFUNCTION(BlueprintCallable, Category = "Credits")
 	bool SpendCredits(int Amount);
 };

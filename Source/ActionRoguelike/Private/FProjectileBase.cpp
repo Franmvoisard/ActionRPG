@@ -1,18 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "ActionRoguelike/Public/FProjectileBase.h"
+
+#include "DebugCVar.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Logging/StructuredLog.h"
 #include "Particles/ParticleSystemComponent.h"
 
-
-// Sets default values
 DEFINE_LOG_CATEGORY(Projectiles);
 AFProjectileBase::AFProjectileBase()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
 	SphereComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	SphereComponent->SetCollisionProfileName("Projectile");
 	
@@ -30,12 +28,18 @@ AFProjectileBase::AFProjectileBase()
 	CameraShakeOnImpact = nullptr;
 	ShakeIgnoreAreaRadius = 200.0f;
 	ShakeImpactAreaRadius = 500.0f;
-	//bReplicates = true;
+	bReplicates = true;
 }
 
 void AFProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOGFMT(Projectiles, Display, "Projectile hit with actor `{ActorName}` and component `{ComponentName}`, instigator was `{Instigator}`", *OtherActor->GetName(), *OtherComp->GetName(), GetInstigator() != nullptr ? *GetInstigator()->GetName() : TEXT("null"));
+	DEBUG_ONLY(
+		if (DebugCVar::IsProjectilesDebugEnabled())
+		{
+			UE_LOGFMT(Projectiles, Display, "Projectile hit with actor `{ActorName}` and component `{ComponentName}`, instigator was `{Instigator}`", *OtherActor->GetName(), *OtherComp->GetName(), GetInstigator() != nullptr ? *GetInstigator()->GetName() : TEXT("null"));
+		}
+	)
+	
 	if (GetInstigator() != OtherActor)
 	{
 		Explode();

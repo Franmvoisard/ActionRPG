@@ -33,8 +33,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UProjectileMovementComponent* ProjectileMovement;
-
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Effects")
 	UParticleSystemComponent* ParticleComponent;
 

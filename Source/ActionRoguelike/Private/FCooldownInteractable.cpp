@@ -4,6 +4,7 @@
 
 #include "FCooldownInteractable.h"
 #include "Components/SphereComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AFCooldownInteractable::AFCooldownInteractable()
@@ -15,6 +16,11 @@ AFCooldownInteractable::AFCooldownInteractable()
 	IsInteractable = true;
 	Cooldown = 10.0f;
 	bReplicates = true;
+}
+
+void AFCooldownInteractable::OnRep_IsInteractable()
+{
+	SetInteractionState(IsInteractable);
 }
 
 void AFCooldownInteractable::SetInteractionState(bool IsActive)
@@ -39,3 +45,8 @@ void AFCooldownInteractable::Interact_Implementation(APawn* InstigatorPawn)
 {
 }
 
+void AFCooldownInteractable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AFCooldownInteractable, IsInteractable);
+}

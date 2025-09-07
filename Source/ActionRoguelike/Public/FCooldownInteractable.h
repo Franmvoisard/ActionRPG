@@ -36,7 +36,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	FLinearColor NonInteractableColor;
 	FTimerHandle Timer_ResetInteraction;
+
+	UPROPERTY(ReplicatedUsing=OnRep_IsInteractable)
 	bool IsInteractable;
+
+	UFUNCTION()
+	void OnRep_IsInteractable();
 	
 	void SetInteractionState(bool IsActive);
 	void ResetInteractionTimer_Elapsed();

@@ -77,26 +77,32 @@ void UFAttributeComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProp
 
 bool UFAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
-	if (!GetOwner()->CanBeDamaged()) return false;
+	if (!GetOwner()->CanBeDamaged() && Delta < 0.0f) return false;
 	
 	const float OldHealth = Health;
 	Health = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
 	
 	const float ActualDelta = Health - OldHealth;
-	Health = FMath::Clamp(Health, 0.0f, MaxHealth);
+	const float NewHealth = FMath::Clamp(Health, 0.0f, MaxHealth);
 
-	if (ActualDelta != 0.0f)
+	if (GetOwner()->HasAuthority())
 	{
-		MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
-	}
-	
-	if (ActualDelta < 0.0f && Health == 0.0f)
-	{
-		if (AFGameModeBase* GameMode = Cast<AFGameModeBase>(GetWorld()->GetAuthGameMode()))
+		Health = NewHealth;
+
+		if (ActualDelta != 0.0f)
 		{
-			GameMode->OnActorKilled(GetOwner(), InstigatorActor);
+			MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
+		}
+		
+		if (ActualDelta < 0.0f && Health == 0.0f)
+		{
+			if (AFGameModeBase* GameMode = Cast<AFGameModeBase>(GetWorld()->GetAuthGameMode()))
+			{
+				GameMode->OnActorKilled(GetOwner(), InstigatorActor);
+			}
 		}
 	}
+	
 	return ActualDelta != 0.0f;
 }
 

@@ -16,7 +16,12 @@ UFInteractionComponent::UFInteractionComponent()
 
 void UFInteractionComponent::PrimaryInteract()
 {
-	if (FocusedActor == nullptr)
+	ServerInteract(FocusedActor);
+}
+
+void UFInteractionComponent::ServerInteract_Implementation(AActor* InFocus)
+{
+	if (InFocus == nullptr)
 	{
 		DEBUG_ONLY(
 			if (DebugCVar::IsInteractionDebugEnabled())
@@ -28,14 +33,19 @@ void UFInteractionComponent::PrimaryInteract()
 	else
 	{
 		APawn* MyPawn = Cast<APawn>(GetOwner());
-		IFGameplayInterface::Execute_Interact(FocusedActor, MyPawn);
+		IFGameplayInterface::Execute_Interact(InFocus, MyPawn);
 	}
 }
 
 void UFInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	FindBestInteractable();
+
+	APawn* MyPawn = Cast<APawn>(GetOwner());
+	if (MyPawn->IsLocallyControlled())
+	{
+		FindBestInteractable();
+	}
 }
 
 void UFInteractionComponent::FindBestInteractable()
@@ -76,7 +86,7 @@ void UFInteractionComponent::FindBestInteractable()
 		}
 
 		if (DefaultWidgetInstance)
-		{
+		{ 
 			DefaultWidgetInstance->AttachedActor = FocusedActor;
 			if (!DefaultWidgetInstance->IsInViewport())
 			{

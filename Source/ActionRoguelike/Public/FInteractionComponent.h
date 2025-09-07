@@ -20,6 +20,9 @@ public:
 	void PrimaryInteract();
 
 protected:
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(AActor* InFocus);
+	
 	UPROPERTY()
 	AActor* FocusedActor;
 

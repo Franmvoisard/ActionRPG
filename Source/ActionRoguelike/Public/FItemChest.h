@@ -22,6 +22,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
 
+	UFUNCTION()
+	void OnRep_LidOpened();
+	
+	UPROPERTY(ReplicatedUsing = OnRep_LidOpened, BlueprintReadOnly)
+	bool bLidOpened;
+
 public:
 	AFItemChest();
 };

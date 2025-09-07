@@ -4,8 +4,11 @@
 
 #include "FItemChest.h"
 
+#include "Net/UnrealNetwork.h"
+
 
 // Sets default values
+
 AFItemChest::AFItemChest()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -14,10 +17,24 @@ AFItemChest::AFItemChest()
 	RootComponent = BaseMesh;
 	LidMesh = CreateDefaultSubobject<UStaticMeshComponent>("LidMesh");
 	LidMesh->SetupAttachment(BaseMesh);
+	bReplicates = true;
 }
 
 void AFItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
-	LidMesh->SetRelativeRotation(FRotator(110, 0, 0));
+	bLidOpened = !bLidOpened;
+	OnRep_LidOpened();
+}
+
+void AFItemChest::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AFItemChest, bLidOpened);
+}
+
+void AFItemChest::OnRep_LidOpened()
+{
+	float CurrentPitch = bLidOpened ? 110 : 0.0f;
+	LidMesh->SetRelativeRotation(FRotator(CurrentPitch, 0, 0));
 }
 

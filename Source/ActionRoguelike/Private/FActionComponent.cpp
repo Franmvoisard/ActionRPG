@@ -87,6 +87,10 @@ bool UFActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 		{
 			if (Action->IsRunning())
 			{
+				if (!GetOwner()->HasAuthority())
+				{
+					ServerStopAction(Instigator, ActionName);	
+				}
 				Action->StopAction(Instigator);
 				return true;
 			}

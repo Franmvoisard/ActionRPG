@@ -40,11 +40,18 @@ public:
 	UFAction* GetAction(TSubclassOf<UFAction> ActionType);
 
 protected:
+	UFUNCTION(Server, Reliable)
+	void ServerStartAction(AActor* Instigator, FName ActionName);
+
+	UFUNCTION(Server, Reliable)
+	void ServerStopAction(AActor* Instigator, FName ActionName);
+	
 	UPROPERTY(EditAnywhere, Category = Actions)
 	TArray<TSubclassOf<UFAction>> DefaultActions;
 	
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<UFAction*> Actions;
 
 	virtual void BeginPlay() override;
+	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags);
 };

@@ -5,9 +5,15 @@
 
 #include "DebugCVar.h"
 #include "FActionComponent.h"
+#include "Net/UnrealNetwork.h"
 
 UFAction::UFAction()
 {
+}
+
+void UFAction::Initialize(UFActionComponent* ActionComponent)
+{
+	OwnerActionComponent =ActionComponent;
 }
 
 bool UFAction::CanStart_Implementation(AActor* Instigator)
@@ -31,14 +37,14 @@ void UFAction::StartAction_Implementation(AActor* Instigator)
 			UE_LOG(LogTemp, Warning, TEXT("Running Action: %s"), *GetNameSafe(this));
 		}
 	)
-	bIsRunning = true;
+	RepData.bIsRunning = true;
+	RepData.Instigator = Instigator;
 	UFActionComponent* ActionComponent = GetOwningComponent();
 	ActionComponent->ActiveGameplayTags.AppendTags(GrantsTags);
 }
 
 void UFAction::StopAction_Implementation(AActor* Instigator)
 {
-	ensureAlways(bIsRunning);
 	DEBUG_ONLY
 	(
 		if (DebugCVar::IsActionsDebugEnabled())
@@ -46,26 +52,51 @@ void UFAction::StopAction_Implementation(AActor* Instigator)
 			UE_LOG(LogTemp, Warning, TEXT("Stopped Action: %s"), *GetNameSafe(this));
 		}
 	)
-	bIsRunning = false;
+	RepData.bIsRunning = false;
+	RepData.Instigator = Instigator;
 	UFActionComponent* ActionComponent = GetOwningComponent();
 	ActionComponent->ActiveGameplayTags.RemoveTags(GrantsTags);
 }
 
 bool UFAction::IsRunning() const
 {
-	return bIsRunning;
+	return RepData.bIsRunning;
 }
 
 UWorld* UFAction::GetWorld() const
 {
-	if (UActorComponent* ActorComponent = Cast<UActorComponent> (GetOuter()))
+	if (AActor* ActorComponent = Cast<AActor> (GetOuter()))
 	{
 		return ActorComponent->GetWorld();
 	}
 	return nullptr;
 }
 
+void UFAction::OnRep_RepData()
+{
+	if (RepData.bIsRunning)
+	{
+		StartAction(RepData.Instigator);
+	}
+	else
+	{
+		StopAction(RepData.Instigator);
+	}
+}
+
 UFActionComponent* UFAction::GetOwningComponent() const
 {
 	return Cast<UFActionComponent>(GetOuter());
+}
+
+void UFAction::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UFAction, RepData);
+	DOREPLIFETIME(UFAction, OwnerActionComponent);
+}
+
+bool UFAction::IsSupportedForNetworking() const
+{
+	return true;
 }

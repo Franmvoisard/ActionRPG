@@ -7,10 +7,13 @@
 
 #include "DebugCVar.h"
 #include "FAction.h"
+#include "Engine/ActorChannel.h"
+#include "Net/UnrealNetwork.h"
 
 UFActionComponent::UFActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	SetIsReplicatedByDefault(true);
 }
 
 void UFActionComponent::AddAction(AActor* Instigator, TSubclassOf<UFAction> ActionClass)
@@ -20,9 +23,10 @@ void UFActionComponent::AddAction(AActor* Instigator, TSubclassOf<UFAction> Acti
 		UE_LOG(LogTemp, Error, TEXT("Trying to add a null action class"));
 		return;
 	}
-	UFAction* NewAction = NewObject<UFAction>(this, ActionClass);
+	UFAction* NewAction = NewObject<UFAction>(GetOwner(), ActionClass);
 	if (ensure(NewAction))
 	{
+		NewAction->Initialize(this);
 		Actions.Add(NewAction);
 		if (NewAction->bAutoStart && NewAction->CanStart(Instigator))
 		{
@@ -57,6 +61,10 @@ bool UFActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 					}
 				)
 				continue;
+			}
+			if (!GetOwner()->HasAuthority())
+			{
+				ServerStartAction(Instigator, ActionName);
 			}
 			Action->StartAction(Instigator);
 			return true;
@@ -93,11 +101,48 @@ UFAction* UFActionComponent::GetAction(TSubclassOf<UFAction> ActionType)
 	return nullptr;
 }
 
+void UFActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StartActionByName(Instigator, ActionName);
+}
+
+void UFActionComponent::ServerStopAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StopActionByName(Instigator, ActionName);
+}
+
 void UFActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	for (TSubclassOf<UFAction> ActionClass : DefaultActions)
+	if (GetOwner()->HasAuthority())
 	{
-		AddAction(GetOwner(), ActionClass);
+		for (TSubclassOf<UFAction> ActionClass : DefaultActions)
+		{
+			AddAction(GetOwner(), ActionClass);
+		}
 	}
+}
+
+void UFActionComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UFActionComponent, Actions);
+}
+
+bool UFActionComponent::ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch,
+                                            FReplicationFlags* RepFlags)
+{
+	bool bWroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+
+	for (UFAction* Action : Actions)
+	{
+		if (Action)
+		{
+			if (Channel->ReplicateSubobject(Action, *Bunch, *RepFlags))
+			{
+				bWroteSomething = true;
+			}
+		}
+	}
+	return bWroteSomething;
 }

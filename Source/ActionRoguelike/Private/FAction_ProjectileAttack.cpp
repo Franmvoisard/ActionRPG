@@ -24,6 +24,7 @@ void UFAction_ProjectileAttack::StartAction_Implementation(AActor* Instigator)
 	if (AFCharacter* Character = Cast<AFCharacter>(Instigator))
 	{
 		Character->PlayAnimMontage(AttackAnimation);
+		if (!Character->HasAuthority()) return;
 		
 		FTimerHandle TimerHandle_ProjectileAttack;
 		FTimerDelegate Delegate;

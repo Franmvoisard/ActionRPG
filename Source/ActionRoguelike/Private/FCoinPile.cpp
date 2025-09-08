@@ -18,6 +18,7 @@ void AFCoinPile::Interact_Implementation(APawn* InstigatorPawn)
 {
 	Super::Interact_Implementation(InstigatorPawn);
 	ensure(IsValid(InstigatorPawn));
+	if (!HasAuthority()) return;
 	if (IsInteractable)
 	{
 		AFPlayerState* PlayerState = Cast<AFPlayerState>(UGameplayStatics::GetPlayerState(GetWorld(), 0));

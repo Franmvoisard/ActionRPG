@@ -20,8 +20,8 @@ bool UFAction::CanStart_Implementation(AActor* Instigator)
 {
 	if (IsRunning()) return false;
 	
-	UFActionComponent* ActionComponent = GetOwningComponent();
-	if (ActionComponent->ActiveGameplayTags.HasAny(BlockedTags))
+	//UFActionComponent* ActionComponent = GetOwningComponent();
+	if (OwnerActionComponent->ActiveGameplayTags.HasAny(BlockedTags))
 	{
 		return false;
 	}
@@ -39,8 +39,8 @@ void UFAction::StartAction_Implementation(AActor* Instigator)
 	)
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
-	UFActionComponent* ActionComponent = GetOwningComponent();
-	ActionComponent->ActiveGameplayTags.AppendTags(GrantsTags);
+	//UFActionComponent* ActionComponent = GetOwningComponent();
+	OwnerActionComponent->ActiveGameplayTags.AppendTags(GrantsTags);
 }
 
 void UFAction::StopAction_Implementation(AActor* Instigator)
@@ -54,8 +54,8 @@ void UFAction::StopAction_Implementation(AActor* Instigator)
 	)
 	RepData.bIsRunning = false;
 	RepData.Instigator = Instigator;
-	UFActionComponent* ActionComponent = GetOwningComponent();
-	ActionComponent->ActiveGameplayTags.RemoveTags(GrantsTags);
+	//UFActionComponent* ActionComponent = GetOwningComponent();
+	OwnerActionComponent->ActiveGameplayTags.RemoveTags(GrantsTags);
 }
 
 bool UFAction::IsRunning() const

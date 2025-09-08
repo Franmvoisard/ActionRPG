@@ -23,6 +23,12 @@ void UFActionComponent::AddAction(AActor* Instigator, TSubclassOf<UFAction> Acti
 		UE_LOG(LogTemp, Error, TEXT("Trying to add a null action class"));
 		return;
 	}
+
+	if (!GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Trying to add an action of type [%s] on a client actor"), *GetNameSafe(ActionClass));
+		return;
+	}
 	UFAction* NewAction = NewObject<UFAction>(GetOwner(), ActionClass);
 	if (ensure(NewAction))
 	{

@@ -50,7 +50,7 @@ void AFMagicProjectile::OnActorBeginOverlap_Implementation(UPrimitiveComponent* 
 		if (UFGameplayFunctionLibrary::ApplyDirectionalDamage(OtherActor, GetInstigator(), ProjectileDamage, Hit))
 		{
 			Explode();
-			if (ActionComponent)
+			if (ActionComponent && HasAuthority())
 			{
 				ActionComponent->AddAction(GetInstigator(), BurningActionClass);
 			}

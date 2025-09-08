@@ -65,7 +65,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool IsRunning() const;
-	UWorld* GetWorld() const override;
 
+	virtual UWorld* GetWorld() const override;
 	virtual bool IsSupportedForNetworking() const override;
 };

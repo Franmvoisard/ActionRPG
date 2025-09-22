@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FGameModeBase.h"
 #include "GameFramework/PlayerState.h"
 #include "FPlayerState.generated.h"
 
@@ -36,4 +37,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Credits")
 	bool SpendCredits(int Amount);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Save System")
+	void SavePlayerState(UFSaveGame* SaveObject);
+	
+	UFUNCTION(BlueprintNativeEvent, Category = "Save System")
+	void LoadPlayerState(UFSaveGame* SaveObject);
+	
 };

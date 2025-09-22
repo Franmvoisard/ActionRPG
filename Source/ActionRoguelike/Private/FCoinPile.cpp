@@ -21,7 +21,7 @@ void AFCoinPile::Interact_Implementation(APawn* InstigatorPawn)
 	if (!HasAuthority()) return;
 	if (IsInteractable)
 	{
-		AFPlayerState* PlayerState = Cast<AFPlayerState>(UGameplayStatics::GetPlayerState(GetWorld(), 0));
+		AFPlayerState* PlayerState = InstigatorPawn->GetPlayerState<AFPlayerState>();
 		
 		if (PlayerState)
 		{

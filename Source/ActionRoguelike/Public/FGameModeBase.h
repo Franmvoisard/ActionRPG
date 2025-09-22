@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FSaveGame.h"
 #include "AI/FAICharacter.h"
 #include "EnvironmentQuery/EnvQuery.h"
 #include "EnvironmentQuery/EnvQueryInstanceBlueprintWrapper.h"
@@ -24,8 +25,21 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "AI")
 	TArray<FVector> InteractablesLocation;
+	
 
+	UFUNCTION(Blueprintcallable, Category = "SaveGame")
+	void WriteSaveGame();
+
+	UFUNCTION(Blueprintcallable, Category = "SaveGame")
+	void LoadSaveGame();
+
+	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 protected:
+	FString SlotName;
+
+	UPROPERTY()
+	UFSaveGame* CurrentSaveGame;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 	int CreditsPerKill;
 	
@@ -66,6 +80,8 @@ protected:
 
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
+
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 
 private:
 	void SpawnInteractables();

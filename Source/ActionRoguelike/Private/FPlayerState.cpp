@@ -40,6 +40,22 @@ bool AFPlayerState::SpendCredits(int Amount)
 	return true;
 }
 
+void AFPlayerState::LoadPlayerState_Implementation(UFSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		Credits = SaveObject->Credits;
+	}
+}
+
+void AFPlayerState::SavePlayerState_Implementation(UFSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		SaveObject->Credits = Credits;
+	}
+}
+
 void AFPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

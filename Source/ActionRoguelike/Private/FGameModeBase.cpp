@@ -10,8 +10,11 @@
 #include "FCharacter.h"
 #include "FCoinPile.h"
 #include "FPlayerState.h"
+#include "FSaveGame.h"
 #include "AI/FAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+#include "GameFramework/GameStateBase.h"
+#include "Kismet/GameplayStatics.h"
 
 AFGameModeBase::AFGameModeBase()
 {
@@ -19,6 +22,7 @@ AFGameModeBase::AFGameModeBase()
 	SpawnTimerInterval = 2.0f;
 	PlayerRespawnDelay = 2.2f;
 	CreditsPerKill = 1;
+	SlotName = "SaveGame01";
 }
 
 void AFGameModeBase::StartPlay()
@@ -155,5 +159,61 @@ void AFGameModeBase::RespawnPlayerElapsed(AController* Controller)
 	{
 		Controller->UnPossess();
 		RestartPlayer(Controller);
+	}
+}
+
+void AFGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+	LoadSaveGame();
+}
+
+void AFGameModeBase::LoadSaveGame()
+{
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+	{
+		CurrentSaveGame = Cast<UFSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+		if (CurrentSaveGame == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to load save game from slot %s"), *SlotName);
+			return;
+		}
+		
+		UE_LOG(LogTemp, Log, TEXT("Loaded save game from slot %s"), *SlotName);
+	}
+	else
+	{
+		CurrentSaveGame = Cast<UFSaveGame>(UGameplayStatics::CreateSaveGameObject(UFSaveGame::StaticClass()));
+	}
+}
+
+void AFGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+	AFPlayerState* PlayerState = NewPlayer->GetPlayerState<AFPlayerState>();
+	if (PlayerState)
+	{
+		PlayerState->LoadPlayerState(CurrentSaveGame);
+	}
+}
+
+void AFGameModeBase::WriteSaveGame()
+{
+	for (size_t i = 0; i < GameState ->PlayerArray.Num(); i++)
+	{
+		AFPlayerState* PlayerState = Cast<AFPlayerState>(GameState->PlayerArray[i]);
+		if (PlayerState)
+		{
+			PlayerState->SavePlayerState(CurrentSaveGame);
+			break; // Single Player only at the moment
+		}
+	}
+	if (UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0))
+	{
+		UE_LOG(LogTemp, Log, TEXT("Saved save game to slot %s"), *SlotName);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to save save game to slot %s"), *SlotName);
 	}
 }

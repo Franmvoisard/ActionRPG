@@ -13,11 +13,17 @@ struct FActionRepData
 {
 	GENERATED_BODY();
 public:
-	UPROPERTY(NotReplicated)
+	FActionRepData()
+		: bIsRunning(false)
+		, Instigator(nullptr)
+	{}
+	
+	UPROPERTY()
 	bool bIsRunning;
 	
-	UPROPERTY(NotReplicated)
+	UPROPERTY()
 	AActor* Instigator;
+
 };
 UCLASS(Blueprintable)
 class ACTIONROGUELIKE_API UFAction : public UObject

@@ -7,6 +7,7 @@
 
 #include "DebugCVar.h"
 #include "FAction.h"
+#include "ActionRoguelike/DebugUtils.h"
 #include "Engine/ActorChannel.h"
 #include "Net/UnrealNetwork.h"
 
@@ -59,13 +60,7 @@ bool UFActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 		{
 			if (!Action->CanStart(Instigator))
 			{
-				DEBUG_ONLY(
-					if (DebugCVar::IsActionsDebugEnabled())
-					{
-						FString ErrorMessage = FString::Printf(TEXT("Action %s cannot be started"), *Action->GetName());
-						GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, ErrorMessage);
-					}
-				)
+				DebugUtils::ActionSystem::DrawScreenText(FString::Printf(TEXT("Action %s cannot be started"), *Action->GetName()));
 				continue;
 			}
 			if (!GetOwner()->HasAuthority())

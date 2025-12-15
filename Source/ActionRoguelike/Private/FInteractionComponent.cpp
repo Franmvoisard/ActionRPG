@@ -3,8 +3,10 @@
 // No rights reserved. Use freely.
 
 #include "FInteractionComponent.h"
+
 #include "DebugCVar.h"
 #include "FGameplayInterface.h"
+#include "ActionRoguelike/DebugUtils.h"
 
 // Sets default values for this component's properties
 UFInteractionComponent::UFInteractionComponent()
@@ -23,12 +25,10 @@ void UFInteractionComponent::ServerInteract_Implementation(AActor* InFocus)
 {
 	if (InFocus == nullptr)
 	{
-		DEBUG_ONLY(
-			if (DebugCVar::IsInteractionDebugEnabled())
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("No interactable found!"));
-			}
-		)
+		if (DebugCVar::IsInteractionDebugEnabled())
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("No interactable found!"));
+		}
 	}
 	else
 	{
@@ -104,12 +104,7 @@ void UFInteractionComponent::FindBestInteractable()
 	
 	if (FocusedActor)
 	{
-		DEBUG_ONLY(
-			if (DebugCVar::IsInteractionDebugEnabled())
-			{
-				DrawDebugSphere(GetWorld(), Hits.Last().ImpactPoint, TraceRadius, 32, LineColor, false, 2.0f);
-				DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f,0, 2.0f);
-			}
-		)
+		DebugUtils::DrawInteractionSphere(GetWorld(), Hits.Last().ImpactPoint, TraceRadius, LineColor, 2.0f);
+		DebugUtils::DrawInteractionLine(GetWorld(), EyeLocation, End, LineColor, 2.0f);
 	}
 }

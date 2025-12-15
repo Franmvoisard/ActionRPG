@@ -1,10 +1,12 @@
-// Public Domain - 2025 Franco Voisard. This code is provided for skill and knowledge demo purposes. No rights reserved. Use freely.
+// Public Domain - 2025 Franco Voisard. 
+// This code is provided for skill and knowledge demo purposes. 
+// No rights reserved. Use freely.
 
 
 #include "FAction.h"
 
-#include "DebugCVar.h"
 #include "FActionComponent.h"
+#include "ActionRoguelike/DebugUtils.h"
 #include "Net/UnrealNetwork.h"
 
 UFAction::UFAction()
@@ -20,7 +22,6 @@ bool UFAction::CanStart_Implementation(AActor* Instigator)
 {
 	if (IsRunning()) return false;
 	
-	//UFActionComponent* ActionComponent = GetOwningComponent();
 	if (OwnerActionComponent->ActiveGameplayTags.HasAny(BlockedTags))
 	{
 		return false;
@@ -30,31 +31,19 @@ bool UFAction::CanStart_Implementation(AActor* Instigator)
 
 void UFAction::StartAction_Implementation(AActor* Instigator)
 {
-	DEBUG_ONLY
-	(
-		if (DebugCVar::IsActionsDebugEnabled())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Running Action: %s"), *GetNameSafe(this));
-		}
-	)
+	DebugUtils::ActionSystem::DebugLog(LogTemp, ELogVerbosity::Type::Log, (TEXT("Running Action: %s"), *GetNameSafe(this)));
+	
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
-	//UFActionComponent* ActionComponent = GetOwningComponent();
 	OwnerActionComponent->ActiveGameplayTags.AppendTags(GrantsTags);
 }
 
 void UFAction::StopAction_Implementation(AActor* Instigator)
 {
-	DEBUG_ONLY
-	(
-		if (DebugCVar::IsActionsDebugEnabled())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Stopped Action: %s"), *GetNameSafe(this));
-		}
-	)
+	DebugUtils::ActionSystem::DebugLog(LogTemp, ELogVerbosity::Type::Log,(TEXT("Stopped Action: %s"), *GetNameSafe(this)));
+	
 	RepData.bIsRunning = false;
 	RepData.Instigator = Instigator;
-	//UFActionComponent* ActionComponent = GetOwningComponent();
 	OwnerActionComponent->ActiveGameplayTags.RemoveTags(GrantsTags);
 }
 

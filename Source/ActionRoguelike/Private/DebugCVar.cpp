@@ -1,28 +1,37 @@
 #include "DebugCVar.h"
 
-static TAutoConsoleVariable CVarDebugInteraction(TEXT("ar.EnableInteractionDebug"), false, TEXT("Enable debugging for all the interaction system."), ECVF_Cheat);
-static TAutoConsoleVariable CVarDebugProjectilesEnabled(TEXT("ar.Projectiles.DebugDrawEnabled"), false, TEXT("Enable debug draw for projectiles"), ECVF_Cheat);
-static TAutoConsoleVariable CVarDebugActions(TEXT("ar.EnableActionsDebug"), false, TEXT("Enable debugging for all the action component system."), ECVF_Cheat);
-static TAutoConsoleVariable CVarSpawnBots(TEXT("ar.SpawnBots"), true, TEXT("Enable or disable bots spawning"), ECVF_Cheat);
-
-bool DebugCVar::IsInteractionDebugEnabled()
+namespace DebugCVar
 {
-	return CVarDebugInteraction.GetValueOnGameThread();
+	bool bEnableInteractionDebug = false;
+	bool bEnableProjectilesDebug = false;
+	bool bEnableActionsDebug = false;
+	bool bEnableBotSpawning = true;
+
+	FAutoConsoleVariableRef CVarInteractionDebug(
+		TEXT("ar.EnableInteractionDebug"),
+		bEnableInteractionDebug,
+		TEXT("Enable debugging for the interaction system."),
+		ECVF_Cheat
+	);
+
+	FAutoConsoleVariableRef CVarProjectileDebug(
+		TEXT("ar.Projectiles.DebugDrawEnabled"),
+		bEnableProjectilesDebug,
+		TEXT("Enable debug draw for projectiles"),
+		ECVF_Cheat
+	);
+
+	FAutoConsoleVariableRef CVarActionsDebug(
+		TEXT("ar.EnableActionsDebug"),
+		bEnableActionsDebug,
+		TEXT("Enable debugging for the action component system."),
+		ECVF_Cheat
+	);
+
+	FAutoConsoleVariableRef CVarSpawnBots(
+		TEXT("ar.SpawnBots"),
+		bEnableBotSpawning,
+		TEXT("Enable or disable bots spawning"),
+		ECVF_Cheat
+	);
 }
-
-bool DebugCVar::IsProjectilesDebugEnabled()
-{
-	return CVarDebugProjectilesEnabled.GetValueOnGameThread();
-}
-
-bool DebugCVar::IsActionsDebugEnabled()
-{
-	return CVarDebugActions.GetValueOnGameThread();
-}
-
-bool DebugCVar::IsBotSpawningEnabled()
-{
-	return CVarSpawnBots.GetValueOnGameThread();
-}
-
-

@@ -24,13 +24,11 @@ void AFAction_Interactable::Interact_Implementation(APawn* InstigatorPawn)
 		{
 			if (ActionComponent->GetAction(ActionToGrant))
 			{			
-				DEBUG_ONLY(
-					if (DebugCVar::IsActionsDebugEnabled())
-					{
-						FString DebugMessage = FString::Printf(TEXT("Action %s was already granted to %s"), *GetNameSafe(ActionToGrant), *GetNameSafe(InstigatorPawn));
-						GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, DebugMessage);
-					}
-				)
+				if (DebugCVar::IsActionsDebugEnabled())
+				{
+					FString DebugMessage = FString::Printf(TEXT("Action %s was already granted to %s"), *GetNameSafe(ActionToGrant), *GetNameSafe(InstigatorPawn));
+					GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, DebugMessage);
+				}
 				return;
 			}
 			else

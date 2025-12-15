@@ -61,13 +61,11 @@ void AFGameModeBase::KillAllBots()
 
 void AFGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
-	DEBUG_ONLY (
-		if (!DebugCVar::IsBotSpawningEnabled())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Bots spawn disabled via cvar 'CVarSpawnBots'"));
-			return;
-		}
-	)
+	if (!DebugCVar::IsBotSpawningEnabled())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bots spawn disabled via cvar 'CVarSpawnBots'"));
+		return;
+	}
 	
 	if (QueryStatus != EEnvQueryStatus::Success)
 	{

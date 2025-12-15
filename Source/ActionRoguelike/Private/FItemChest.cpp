@@ -20,6 +20,11 @@ AFItemChest::AFItemChest()
 	bReplicates = true;
 }
 
+void AFItemChest::OnActorLoaded_Implementation()
+{
+	OnRep_LidOpened();
+}
+
 void AFItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
 	bLidOpened = !bLidOpened;

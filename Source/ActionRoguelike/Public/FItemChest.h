@@ -25,9 +25,12 @@ protected:
 	UFUNCTION()
 	void OnRep_LidOpened();
 	
-	UPROPERTY(ReplicatedUsing = OnRep_LidOpened, BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing = OnRep_LidOpened, BlueprintReadOnly, SaveGame)
 	bool bLidOpened;
+
 
 public:
 	AFItemChest();
+
+	virtual void OnActorLoaded_Implementation() override;
 };

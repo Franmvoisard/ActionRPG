@@ -33,8 +33,6 @@ void AFMagicProjectile::Explode_Implementation()
 void AFMagicProjectile::OnActorBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 									   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Log, TEXT("Overlapped"));
-	
 	if (OtherActor && OtherActor != GetInstigator())
 	{
 		UFActionComponent* ActionComponent = OtherActor->GetComponentByClass<UFActionComponent>();

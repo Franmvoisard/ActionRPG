@@ -15,6 +15,7 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
 AFGameModeBase::AFGameModeBase()
 {
@@ -28,6 +29,7 @@ AFGameModeBase::AFGameModeBase()
 void AFGameModeBase::StartPlay()
 {
 	Super::StartPlay();
+	LoadSaveGame();
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &AFGameModeBase::SpawnBotTimer_Elapsed, SpawnTimerInterval, true);
 	SpawnInteractables();
 }
@@ -163,8 +165,9 @@ void AFGameModeBase::RespawnPlayerElapsed(AController* Controller)
 void AFGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
-	LoadSaveGame();
 }
+
+
 
 void AFGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
@@ -188,6 +191,7 @@ void AFGameModeBase::WriteSaveGame()
 		}
 	}
 	
+	CurrentSaveGame->SavedActors.Empty();
 	for (FActorIterator It(GetWorld()); It; ++It)
 	{
 		AActor* Actor = *It;
@@ -200,6 +204,14 @@ void AFGameModeBase::WriteSaveGame()
 		FActorSaveData ActorSaveData;
 		ActorSaveData.ActorName = Actor->GetName();
 		ActorSaveData.Transform = Actor->GetActorTransform();
+		UE_LOG(LogTemp, Log, TEXT("Saving actor %s"), *Actor->GetName());
+		
+		//Convert to binary and write to the actor's binary data
+		FMemoryWriter MemWriter(ActorSaveData.ByteData);
+		FObjectAndNameAsStringProxyArchive Ar(MemWriter, true);
+		Ar.ArIsSaveGame = true;
+		Actor->Serialize(Ar);
+		
 		CurrentSaveGame->SavedActors.Add(ActorSaveData);
 	}
 	
@@ -241,6 +253,14 @@ void AFGameModeBase::LoadSaveGame()
 				if (ActorSaveData.ActorName == Actor->GetName())
 				{
 					Actor->SetActorTransform(ActorSaveData.Transform);
+					FMemoryReader MemReader(ActorSaveData.ByteData);
+					UE_LOG(LogTemp, Log, TEXT("Loaded actor %s"), *Actor->GetName());
+					UE_LOG(LogTemp, Log, TEXT("Loaded actor transform %s"), *Actor->GetTransform().ToHumanReadableString());
+					//Convert binary data into asset
+					FObjectAndNameAsStringProxyArchive Ar(MemReader, true);
+					Ar.ArIsSaveGame = true;
+					Actor->Serialize(Ar);
+					IFGameplayInterface::Execute_OnActorLoaded(Actor);
 					break;
 				}
 			}

@@ -197,7 +197,7 @@ void AFGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* N
 
 void AFGameModeBase::WriteSaveGame()
 {
-	for (size_t i = 0; i < GameState ->PlayerArray.Num(); i++)
+	for (size_t i = 0; i < GameState->PlayerArray.Num(); i++)
 	{
 		AFPlayerState* PlayerState = Cast<AFPlayerState>(GameState->PlayerArray[i]);
 		if (PlayerState)

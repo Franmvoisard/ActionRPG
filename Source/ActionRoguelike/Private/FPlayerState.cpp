@@ -9,7 +9,7 @@
 
 void AFPlayerState::OnRep_Credits(int OldCredits)
 {
-	OnCreditsChanged.Broadcast(Credits, OldCredits - Credits);
+	OnCreditsChanged.Broadcast(this, Credits, OldCredits - Credits);
 }
 
 AFPlayerState::AFPlayerState()
@@ -25,7 +25,7 @@ int AFPlayerState::GetCredits() const
 void AFPlayerState::AddCredits(int Amount)
 {
 	Credits += Amount;
-	OnCreditsChanged.Broadcast(Credits, Amount);
+	OnCreditsChanged.Broadcast(this, Credits, Amount);
 }
 
 bool AFPlayerState::SpendCredits(int Amount)
@@ -36,7 +36,7 @@ bool AFPlayerState::SpendCredits(int Amount)
 	}
 	
 	Credits -= Amount;
-	OnCreditsChanged.Broadcast(Credits, -Amount);
+	OnCreditsChanged.Broadcast(this, Credits, -Amount);
 	return true;
 }
 
@@ -52,7 +52,7 @@ void AFPlayerState::SavePlayerState_Implementation(UFSaveGame* SaveObject)
 {
 	if (SaveObject)
 	{
-		SaveObject->Credits = Credits;
+		SaveObject->Credits = Credits; 
 	}
 }
 

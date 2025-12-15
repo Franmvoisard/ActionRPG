@@ -13,7 +13,7 @@
 UCLASS()
 class ACTIONROGUELIKE_API AFPlayerState : public APlayerState
 {
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCreditsChanged, int, NewCredits, int, Amount);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged, AFPlayerState*, PlayerState, int, NewCredits, int, Amount);
 	GENERATED_BODY()
 	
 protected:

@@ -166,25 +166,6 @@ void AFGameModeBase::InitGame(const FString& MapName, const FString& Options, FS
 	LoadSaveGame();
 }
 
-void AFGameModeBase::LoadSaveGame()
-{
-	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
-	{
-		CurrentSaveGame = Cast<UFSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
-		if (CurrentSaveGame == nullptr)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to load save game from slot %s"), *SlotName);
-			return;
-		}
-		
-		UE_LOG(LogTemp, Log, TEXT("Loaded save game from slot %s"), *SlotName);
-	}
-	else
-	{
-		CurrentSaveGame = Cast<UFSaveGame>(UGameplayStatics::CreateSaveGameObject(UFSaveGame::StaticClass()));
-	}
-}
-
 void AFGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
 	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
@@ -206,6 +187,23 @@ void AFGameModeBase::WriteSaveGame()
 			break; // Single Player only at the moment
 		}
 	}
+	
+	for (FActorIterator It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+		
+		if (!Actor->Implements<UFGameplayInterface>())
+		{
+			continue;
+		}
+		
+		FActorSaveData ActorSaveData;
+		ActorSaveData.ActorName = Actor->GetName();
+		ActorSaveData.Transform = Actor->GetActorTransform();
+		CurrentSaveGame->SavedActors.Add(ActorSaveData);
+	}
+	
+	
 	if (UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Saved save game to slot %s"), *SlotName);
@@ -214,4 +212,45 @@ void AFGameModeBase::WriteSaveGame()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to save save game to slot %s"), *SlotName);
 	}
+}
+
+void AFGameModeBase::LoadSaveGame()
+{
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+	{
+		CurrentSaveGame = Cast<UFSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+		if (CurrentSaveGame == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to load save game from slot %s"), *SlotName);
+			return;
+		}
+		
+		UE_LOG(LogTemp, Log, TEXT("Loaded save game from slot %s"), *SlotName);
+		
+		for (FActorIterator It(GetWorld()); It; ++It)
+		{
+			AActor* Actor = *It;
+			
+			if (!Actor->Implements<UFGameplayInterface>())
+			{
+				continue;
+			}
+			
+			for (FActorSaveData& ActorSaveData : CurrentSaveGame->SavedActors)
+			{
+				if (ActorSaveData.ActorName == Actor->GetName())
+				{
+					Actor->SetActorTransform(ActorSaveData.Transform);
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		CurrentSaveGame = Cast<UFSaveGame>(UGameplayStatics::CreateSaveGameObject(UFSaveGame::StaticClass()));
+		UE_LOG(LogTemp, Log, TEXT("Created new save game in slot %s"), *SlotName);
+	}
+	
+	
 }

@@ -36,6 +36,8 @@ void UFAction::StartAction_Implementation(AActor* Instigator)
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
 	OwnerActionComponent->ActiveGameplayTags.AppendTags(GrantsTags);
+	
+	GetOwningComponent()->OnActionStarted.Broadcast(OwnerActionComponent, this);
 }
 
 void UFAction::StopAction_Implementation(AActor* Instigator)
@@ -45,6 +47,7 @@ void UFAction::StopAction_Implementation(AActor* Instigator)
 	RepData.bIsRunning = false;
 	RepData.Instigator = Instigator;
 	OwnerActionComponent->ActiveGameplayTags.RemoveTags(GrantsTags);
+	GetOwningComponent()->OnActionStopped.Broadcast(OwnerActionComponent, this);
 }
 
 bool UFAction::IsRunning() const

@@ -34,6 +34,9 @@ protected:
 	UFUNCTION()
 	void OnRep_RepData();
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= UI)
+	UTexture2D* Icon;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")
 	FGameplayTagContainer GrantsTags;
 
@@ -47,7 +50,7 @@ protected:
 	FActionRepData RepData;
 
 	UPROPERTY(Replicated)
-	UFActionComponent* OwnerActionComponent; 
+	UFActionComponent* OwnerActionComponent;
 
 public:
 	UFAction();

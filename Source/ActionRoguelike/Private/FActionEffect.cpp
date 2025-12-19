@@ -68,6 +68,8 @@ void UFActionEffect::StopAction_Implementation(AActor* Instigator)
 
 float UFActionEffect::GetTimeRemaining() const
 {
-	float EndTime = GetWorld()->GetTimeSeconds() + Duration;
+	if (Duration == 0.0f) return 0;
+	
+	const float EndTime = TimeStarted + Duration;
 	return EndTime - GetWorld()->GetTimeSeconds();
 }

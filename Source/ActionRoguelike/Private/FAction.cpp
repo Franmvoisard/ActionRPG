@@ -15,7 +15,7 @@ UFAction::UFAction()
 
 void UFAction::Initialize(UFActionComponent* ActionComponent)
 {
-	OwnerActionComponent =ActionComponent;
+	OwnerActionComponent = ActionComponent;
 }
 
 bool UFAction::CanStart_Implementation(AActor* Instigator)
@@ -35,9 +35,9 @@ void UFAction::StartAction_Implementation(AActor* Instigator)
 	
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
+	TimeStarted = GetWorld()->GetTimeSeconds();
 	OwnerActionComponent->ActiveGameplayTags.AppendTags(GrantsTags);
-	
-	GetOwningComponent()->OnActionStarted.Broadcast(OwnerActionComponent, this);
+	OwnerActionComponent->OnActionStarted.Broadcast(OwnerActionComponent, this);
 }
 
 void UFAction::StopAction_Implementation(AActor* Instigator)
@@ -78,7 +78,7 @@ void UFAction::OnRep_RepData()
 
 UFActionComponent* UFAction::GetOwningComponent() const
 {
-	return Cast<UFActionComponent>(GetOuter());
+	return OwnerActionComponent;
 }
 
 void UFAction::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

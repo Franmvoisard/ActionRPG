@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputAction.h"
 #include "GameFramework/PlayerController.h"
 #include "FPlayerController.generated.h"
 
@@ -15,6 +16,20 @@ class ACTIONROGUELIKE_API AFPlayerController : public APlayerController
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> PauseMenuClass;
+	
+	UPROPERTY()
+	UUserWidget* PauseMenuInstance;
+	
+	UFUNCTION(BlueprintCallable)
+	void TogglePauseMenu();
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	UInputAction* PauseInputAction;
+	
+	virtual void SetupInputComponent() override;
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void BeginPlayingStateEvent();
 	

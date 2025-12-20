@@ -35,7 +35,12 @@ void UFAction::StartAction_Implementation(AActor* Instigator)
 	
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
-	TimeStarted = GetWorld()->GetTimeSeconds();
+	
+	if (GetOwningComponent()->GetOwnerRole() == ROLE_Authority)
+	{
+		TimeStarted = GetWorld()->GetTimeSeconds();
+	}
+	
 	OwnerActionComponent->ActiveGameplayTags.AppendTags(GrantsTags);
 	OwnerActionComponent->OnActionStarted.Broadcast(OwnerActionComponent, this);
 }
@@ -86,6 +91,7 @@ void UFAction::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UFAction, RepData);
 	DOREPLIFETIME(UFAction, OwnerActionComponent);
+	DOREPLIFETIME(UFAction, TimeStarted);
 }
 
 bool UFAction::IsSupportedForNetworking() const

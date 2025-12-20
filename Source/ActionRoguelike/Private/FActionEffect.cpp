@@ -4,6 +4,7 @@
 
 #include "FActionEffect.h"
 #include "FActionComponent.h"
+#include "GameFramework/GameStateBase.h"
 
 UFActionEffect::UFActionEffect()
 {
@@ -69,7 +70,10 @@ void UFActionEffect::StopAction_Implementation(AActor* Instigator)
 float UFActionEffect::GetTimeRemaining() const
 {
 	if (Duration == 0.0f) return 0;
-	
-	const float EndTime = TimeStarted + Duration;
-	return EndTime - GetWorld()->GetTimeSeconds();
+	if (AGameStateBase* GameState = GetWorld()->GetGameState<AGameStateBase>())
+	{
+		const float EndTime = TimeStarted + Duration;
+		return EndTime - GameState->GetServerWorldTimeSeconds();
+	}
+	return Duration;
 }

@@ -52,6 +52,7 @@ protected:
 	UPROPERTY(Replicated)
 	UFActionComponent* OwnerActionComponent;
 	
+	UPROPERTY(Replicated)
 	float TimeStarted;
 
 public:

@@ -13,6 +13,12 @@ class ACTIONROGUELIKE_API AFHealthPotion : public AFCooldownInteractable
 	AFHealthPotion();
 	
 protected:
-	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 	bool HealInstigator(APawn* InstigatorToHeal);
+	UPROPERTY(EditAnywhere, Category = "Potion")
+	int32 CreditCost;
+
+
+public:
+	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
+	virtual FText GetInteractionText_Implementation(APawn* InstigatorPawn) override;
 };

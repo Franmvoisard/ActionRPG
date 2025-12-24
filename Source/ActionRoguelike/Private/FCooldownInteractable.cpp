@@ -45,6 +45,11 @@ void AFCooldownInteractable::Interact_Implementation(APawn* InstigatorPawn)
 {
 }
 
+FText AFCooldownInteractable::GetInteractionText_Implementation(APawn* InstigatorPawn)
+{
+	return FText::GetEmpty();
+}
+
 void AFCooldownInteractable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

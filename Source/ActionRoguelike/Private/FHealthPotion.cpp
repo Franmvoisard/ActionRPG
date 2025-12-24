@@ -7,7 +7,10 @@
 
 class UFAttributeComponent;
 
-AFHealthPotion::AFHealthPotion() { }
+AFHealthPotion::AFHealthPotion()
+{
+	CreditCost = 5;
+}
 
 void AFHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
@@ -23,7 +26,7 @@ void AFHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 			if (InstigatorAttributeComponent->IsFullHealth()) return;
 
 			AFPlayerState* PlayerState = InstigatorPawn->GetPlayerState<AFPlayerState>();
-			if (PlayerState && PlayerState->SpendCredits(5))
+			if (PlayerState && PlayerState->SpendCredits(CreditCost))
 			{
 				HealInstigator(InstigatorPawn);
 				GetWorldTimerManager().SetTimer(Timer_ResetInteraction, this, &AFHealthPotion::ResetInteractionTimer_Elapsed,Cooldown);
@@ -44,4 +47,14 @@ bool AFHealthPotion::HealInstigator(APawn* InstigatorToHeal)
 	}
 
 	return false;
+}
+
+FText AFHealthPotion::GetInteractionText_Implementation(APawn* InstigatorPawn)
+{
+	UFAttributeComponent* AttributeComponent = UFAttributeComponent::GetAttributes(InstigatorPawn);
+	if (AttributeComponent && AttributeComponent->IsFullHealth())
+	{
+		return NSLOCTEXT("InteractableActors", "HealthPotion_FullHealthWarning", "Already at full health.");
+	}
+	return FText::Format(NSLOCTEXT("InteractableActors", "HealthPotion_InteractMessage", "Cost {0} Credits. Restores health to maximum."), CreditCost);
 }

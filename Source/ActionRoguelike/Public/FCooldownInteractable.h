@@ -15,13 +15,14 @@ class ACTIONROGUELIKE_API AFCooldownInteractable : public AActor, public IFGamep
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	AFCooldownInteractable();
+	FText GetInteractionText_Implementation(APawn* InstigatorPawn);
 
 protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* MeshComponent;
-	
+
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereComponent;
 
@@ -42,7 +43,7 @@ protected:
 
 	UFUNCTION()
 	void OnRep_IsInteractable();
-	
+
 	void SetInteractionState(bool IsActive);
 	void ResetInteractionTimer_Elapsed();
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;

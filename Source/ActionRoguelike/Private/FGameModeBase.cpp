@@ -97,7 +97,19 @@ void AFGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper*
 	TArray<FVector> SpawnLocations = QueryInstance->GetResultsAsLocations();
 	if (SpawnLocations.Num() > 0)
 	{
-		GetWorld()->SpawnActor<AFAICharacter>(MinionClass, SpawnLocations[0], FRotator::ZeroRotator);
+		if (MonsterTable)
+		{
+			TArray<FMonsterTypeInfoRow*> MonsterTypesRows;
+			MonsterTable->GetAllRows("", MonsterTypesRows);
+			
+			int32 RandomIndex = FMath::RandRange(0, MonsterTypesRows.Num() - 1);
+			FMonsterTypeInfoRow* RandomMonsterType = MonsterTypesRows[RandomIndex];
+			GetWorld()->SpawnActor<AFAICharacter>(RandomMonsterType->MonsterData->MonsterClass, SpawnLocations[0], FRotator::ZeroRotator);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No monster table found!"));
+		}
 	}
 }
 

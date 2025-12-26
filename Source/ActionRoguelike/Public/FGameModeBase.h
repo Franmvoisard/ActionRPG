@@ -1,11 +1,12 @@
-// Public Domain - 2025 Franco Voisard. This code is provided for skill and knowledge demo purposes. No rights reserved. Use freely.
+// Public Domain - 2025 Franco Voisard. 
+// This code is provided for skill and knowledge demo purposes.
+// No rights reserved. Use freely.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FMonsterData.h"
 #include "FSaveGame.h"
-#include "AI/FAICharacter.h"
-#include "EnvironmentQuery/EnvQuery.h"
 #include "EnvironmentQuery/EnvQueryInstanceBlueprintWrapper.h"
 #include "GameFramework/GameModeBase.h"
 #include "FGameModeBase.generated.h"
@@ -13,11 +14,40 @@
 /**
  * 
  */
+
+
+USTRUCT(BlueprintType)
+struct FMonsterTypeInfoRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FMonsterTypeInfoRow()
+	{
+		CreditsPerKill = 5;
+		SpawnChance = 1.0f;
+		SpawnCooldown = 5.0f;
+		MonsterData = nullptr;
+	}
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly)
+	UFMonsterData* MonsterData;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly)
+	float SpawnChance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly);
+	float SpawnCooldown;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly)
+	int CreditsPerKill;
+
+};
 UCLASS()
 class ACTIONROGUELIKE_API AFGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
+	
 public:
 	AFGameModeBase();
 	virtual void StartPlay() override;
@@ -34,9 +64,13 @@ public:
 	void LoadSaveGame();
 
 	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+	
 protected:
 	FString SlotName;
 
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UDataTable* MonsterTable;
+	
 	UPROPERTY()
 	UFSaveGame* CurrentSaveGame;
 	
@@ -44,9 +78,6 @@ protected:
 	int CreditsPerKill;
 	
 	FTimerHandle TimerHandle_SpawnBots;
-
-	UPROPERTY(EditDefaultsOnly, Category = "AI")
-	TSubclassOf<AFAICharacter> MinionClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 	TArray<TSubclassOf<AActor>> InteractablesClasses;

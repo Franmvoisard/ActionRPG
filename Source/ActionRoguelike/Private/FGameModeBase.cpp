@@ -13,6 +13,7 @@
 #include "FPlayerState.h"
 #include "FSaveGame.h"
 #include "AI/FAICharacter.h"
+#include "Engine/AssetManager.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -104,17 +105,17 @@ void AFGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper*
 			MonsterTable->GetAllRows("", MonsterTypesRows);
 			
 			int32 RandomIndex = FMath::RandRange(0, MonsterTypesRows.Num() - 1);
-			FMonsterTypeInfoRow* RandomMonsterType = MonsterTypesRows[RandomIndex];
-			if (AActor* Enemy = GetWorld()->SpawnActor<AFAICharacter>(RandomMonsterType->MonsterData->MonsterClass, SpawnLocations[0], FRotator::ZeroRotator))
+			FMonsterTypeInfoRow* MonsterType = MonsterTypesRows[RandomIndex];
+
+			if (UAssetManager* Manager = UAssetManager::GetIfInitialized())
 			{
-				UFActionComponent* ActionComponent = Enemy->GetComponentByClass<UFActionComponent>();
-				if (ActionComponent)
-				{
-					for (TSubclassOf<UFAction> Action : RandomMonsterType->MonsterData->Actions)
-					{
-						ActionComponent->AddAction(this, Action);
-					}
-				}
+				TArray<FName> Bundles;
+				FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &AFGameModeBase::OnMonsterLoaded, MonsterType->MonsterId, SpawnLocations[0]);
+				Manager->LoadPrimaryAsset(MonsterType->MonsterId, Bundles, Delegate);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Asset Manager not found."));
 			}
 		}
 		else
@@ -190,6 +191,51 @@ void AFGameModeBase::InitGame(const FString& MapName, const FString& Options, FS
 	Super::InitGame(MapName, Options, ErrorMessage);
 }
 
+void AFGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation)
+{
+    UAssetManager* Manager = UAssetManager::GetIfInitialized();
+    if (!Manager)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Asset Manager not initialized while loading monster %s"), *LoadedId.ToString());
+        return;
+    }
+
+    UFMonsterData* MonsterData = Cast<UFMonsterData>(Manager->GetPrimaryAssetObject(LoadedId));
+    if (!MonsterData)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Failed to get MonsterData for asset %s"), *LoadedId.ToString());
+        return;
+    }
+
+    UWorld* World = GetWorld();
+    if (!ensure(World))
+    {
+        return;
+    }
+
+    AFAICharacter* Enemy = World->SpawnActor<AFAICharacter>(MonsterData->MonsterClass, SpawnLocation, FRotator::ZeroRotator);
+    if (!Enemy)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Failed to spawn AI Character for %s at %s"), *LoadedId.ToString(), *SpawnLocation.ToString());
+        return;
+    }
+
+    UFActionComponent* ActionComponent = Enemy->FindComponentByClass<UFActionComponent>();
+    if (!ActionComponent)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Spawned enemy %s is missing UFActionComponent"), *GetNameSafe(Enemy));
+        return;
+    }
+
+    for (const TSubclassOf<UFAction>& Action : MonsterData->Actions)
+    {
+        if (!Action)
+        {
+            continue;
+        }
+        ActionComponent->AddAction(Enemy, Action);
+    }
+}
 
 
 void AFGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)

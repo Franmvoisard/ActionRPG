@@ -26,11 +26,10 @@ struct FMonsterTypeInfoRow : public FTableRowBase
 		CreditsPerKill = 5;
 		SpawnChance = 1.0f;
 		SpawnCooldown = 5.0f;
-		MonsterData = nullptr;
 	}
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly)
-	UFMonsterData* MonsterData;
+	FPrimaryAssetId MonsterId;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly)
 	float SpawnChance;
@@ -96,13 +95,13 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float PlayerRespawnDelay;
-	
+
 	UFUNCTION()
 	void OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
 	UFUNCTION()
 	void OnSpawnInteractablesQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
-	
+
 	UFUNCTION()
 	void SpawnBotTimer_Elapsed();
 
@@ -113,6 +112,8 @@ protected:
 	void RespawnPlayerElapsed(AController* Controller);
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
+	void OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation);
 
 private:
 	void SpawnInteractables();

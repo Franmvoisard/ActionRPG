@@ -7,6 +7,7 @@
 
 #include "DebugCVar.h"
 #include "EngineUtils.h"
+#include "FActionComponent.h"
 #include "FCharacter.h"
 #include "FCoinPile.h"
 #include "FPlayerState.h"
@@ -104,7 +105,17 @@ void AFGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper*
 			
 			int32 RandomIndex = FMath::RandRange(0, MonsterTypesRows.Num() - 1);
 			FMonsterTypeInfoRow* RandomMonsterType = MonsterTypesRows[RandomIndex];
-			GetWorld()->SpawnActor<AFAICharacter>(RandomMonsterType->MonsterData->MonsterClass, SpawnLocations[0], FRotator::ZeroRotator);
+			if (AActor* Enemy = GetWorld()->SpawnActor<AFAICharacter>(RandomMonsterType->MonsterData->MonsterClass, SpawnLocations[0], FRotator::ZeroRotator))
+			{
+				UFActionComponent* ActionComponent = Enemy->GetComponentByClass<UFActionComponent>();
+				if (ActionComponent)
+				{
+					for (TSubclassOf<UFAction> Action : RandomMonsterType->MonsterData->Actions)
+					{
+						ActionComponent->AddAction(this, Action);
+					}
+				}
+			}
 		}
 		else
 		{

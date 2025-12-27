@@ -15,7 +15,6 @@ AFProjectileBase::AFProjectileBase()
 	SphereComponent->SetCollisionProfileName("Projectile");
 	
 	RootComponent = SphereComponent;
-	
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>("ParticleComponent");
 	ParticleComponent->SetupAttachment(SphereComponent);
 	

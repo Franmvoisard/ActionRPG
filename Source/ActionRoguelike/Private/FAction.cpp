@@ -31,8 +31,9 @@ bool UFAction::CanStart_Implementation(AActor* Instigator)
 
 void UFAction::StartAction_Implementation(AActor* Instigator)
 {
+#if !UE_BUILD_SHIPPING
 	DebugUtils::ActionSystem::DebugLog(LogTemp, ELogVerbosity::Type::Log, (TEXT("Running Action: %s"), *GetNameSafe(this)));
-	
+#endif
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
 	
@@ -47,7 +48,9 @@ void UFAction::StartAction_Implementation(AActor* Instigator)
 
 void UFAction::StopAction_Implementation(AActor* Instigator)
 {
+#if !UE_BUILD_SHIPPING
 	DebugUtils::ActionSystem::DebugLog(LogTemp, ELogVerbosity::Type::Log,(TEXT("Stopped Action: %s"), *GetNameSafe(this)));
+#endif
 	
 	RepData.bIsRunning = false;
 	RepData.Instigator = Instigator;

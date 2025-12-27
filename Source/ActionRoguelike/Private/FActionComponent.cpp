@@ -128,6 +128,19 @@ void UFActionComponent::BeginPlay()
 	}
 }
 
+void UFActionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	TArray<UFAction*> ActionsCopy = Actions;
+	for (UFAction* Action : ActionsCopy)
+	{
+		if (Action && Action->IsRunning())
+		{
+			Action->StopAction(GetOwner());
+		}
+	}
+	Super::EndPlay(EndPlayReason);
+}
+
 void UFActionComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

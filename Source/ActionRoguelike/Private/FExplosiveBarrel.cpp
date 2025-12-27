@@ -19,14 +19,15 @@ AFExplosiveBarrel::AFExplosiveBarrel()
 	RootComponent = BarrelStaticMesh;
 	BarrelStaticMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 	BarrelStaticMesh->CanCharacterStepUpOn = ECB_No;
-	InitializeRadialForceComponent();
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ExplosionParticle"));
+	InitializeRadialForceComponent();
 }
 
 void AFExplosiveBarrel::InitializeRadialForceComponent()
 {
 	RadialForceComponent = CreateDefaultSubobject<URadialForceComponent>(TEXT("Radial Force Component"));
 	RadialForceComponent->SetupAttachment(GetRootComponent());
+	ParticleComponent->SetupAttachment(GetRootComponent());
 	RadialForceComponent->Radius = 500.0f;
 	RadialForceComponent->ImpulseStrength = 2000.0f;
 	RadialForceComponent->bImpulseVelChange = true;

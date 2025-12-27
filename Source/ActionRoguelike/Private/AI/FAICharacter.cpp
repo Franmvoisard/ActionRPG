@@ -20,7 +20,6 @@ AFAICharacter::AFAICharacter()
 	AttributeComponent = CreateDefaultSubobject<UFAttributeComponent>("Attribute Component");
 	ActionComponent = CreateDefaultSubobject<UFActionComponent>("Action Component");
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
 	
 }

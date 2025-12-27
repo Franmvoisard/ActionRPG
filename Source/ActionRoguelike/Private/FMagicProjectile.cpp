@@ -4,7 +4,6 @@
 #include "FMagicProjectile.h"
 
 #include "FActionComponent.h"
-#include "FAttributeComponent.h"
 #include "FGameplayFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -22,7 +21,7 @@ AFMagicProjectile::AFMagicProjectile()
 void AFMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AFMagicProjectile::OnActorBeginOverlap_Implementation);
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AFMagicProjectile::OnActorOverlap);
 }
 
 void AFMagicProjectile::Explode_Implementation()
@@ -31,8 +30,8 @@ void AFMagicProjectile::Explode_Implementation()
 	Super::Explode_Implementation();
 }
 
-void AFMagicProjectile::OnActorBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-									   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
+void AFMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && OtherActor != GetInstigator())
 	{
@@ -46,7 +45,7 @@ void AFMagicProjectile::OnActorBeginOverlap_Implementation(UPrimitiveComponent* 
 			return;
 		}
 		
-		if (UFGameplayFunctionLibrary::ApplyDirectionalDamage(OtherActor, GetInstigator(), ProjectileDamage, Hit))
+		if (UFGameplayFunctionLibrary::ApplyDirectionalDamage(OtherActor, GetInstigator(), ProjectileDamage, SweepResult))
 		{
 			Explode();
 			if (ActionComponent && HasAuthority())

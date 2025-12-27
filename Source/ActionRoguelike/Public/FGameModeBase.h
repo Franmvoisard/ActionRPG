@@ -110,6 +110,7 @@ protected:
 
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
+	void LoadSaveGameSlotName(const FString& Options);
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 

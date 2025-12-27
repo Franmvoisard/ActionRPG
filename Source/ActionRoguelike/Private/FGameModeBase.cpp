@@ -189,6 +189,16 @@ void AFGameModeBase::RespawnPlayerElapsed(AController* Controller)
 void AFGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
+	LoadSaveGameSlotName(Options);
+}
+
+void AFGameModeBase::LoadSaveGameSlotName(const FString& Options)
+{
+	FString SelectedSaveSlot = UGameplayStatics::ParseOption(Options, "SaveGame");
+	if (!SelectedSaveSlot.IsEmpty())
+	{
+		SlotName = SelectedSaveSlot;
+	}
 }
 
 void AFGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation)

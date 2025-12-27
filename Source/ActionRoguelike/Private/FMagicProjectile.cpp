@@ -13,6 +13,7 @@
 AFMagicProjectile::AFMagicProjectile()
 {
 	ProjectileDamage = 10.0f;
+	InitialLifeSpan = 7.0f;
 	ImpactSoundFX = nullptr;
 }
 
